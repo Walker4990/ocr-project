@@ -1,0 +1,63 @@
+{
+  "image": "invoice_041.png",
+  "template_id": "blue_stacked",
+  "difficulty": "skewed",
+  "writing": "handwritten",
+  "seed": 41,
+  "invoice": {
+    "document_no": "2025-7088",
+    "issue_date": "2025-02-03",
+    "supplier": {
+      "name": "(유) 마루네오유통",
+      "business_number": "491-43-37807",
+      "representative": "한유진",
+      "address": "경기도 남양주시 반포대길 172 (아름강김마을)"
+    },
+    "buyer": {
+      "name": "유한회사 발해상사",
+      "business_number": "271-50-94686",
+      "representative": "이영수",
+      "address": "부산광역시 성동구 역삼로 231"
+    },
+    "items": [
+      {
+        "name": "스프레이 페인트",
+        "spec": "12통",
+        "quantity": 29,
+        "unit_price": 14400,
+        "amount": 417600
+      },
+      {
+        "name": "멀티탭 3m",
+        "spec": "6구",
+        "quantity": 10,
+        "unit_price": 8900,
+        "amount": 89000
+      },
+      {
+        "name": "물티슈 캡형",
+        "spec": "100매",
+        "quantity": 21,
+        "unit_price": 2300,
+        "amount": 48300
+      },
+      {
+        "name": "A4 복사용지 80g",
+        "spec": "500매",
+        "quantity": 17,
+        "unit_price": 5000,
+        "amount": 85000
+      },
+      {
+        "name": "LED 형광등 20W",
+        "spec": "1EA",
+        "quantity": 8,
+        "unit_price": 2800,
+        "amount": 22400
+      }
+    ],
+    "supply_amount": 662300,
+    "tax_amount": 66230,
+    "total_amount": 728530
+  }
+}

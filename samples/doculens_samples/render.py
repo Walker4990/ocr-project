@@ -1,4 +1,5 @@
 """Pillow로 거래명세서 양식 5종을 그린다. 같은 입력이면 항상 같은 이미지가 나온다."""
+import random
 from dataclasses import dataclass
 from functools import cache
 from pathlib import Path
@@ -16,13 +17,28 @@ LINE_HEIGHT = 42  # 칸 안에서 줄바꿈된 두 번째 줄부터 더해지는
 CELL_PADDING = 14
 HEADER_FILL = (235, 235, 235)
 
-FontName = Literal["gothic", "gothic_bold", "myeongjo", "coding"]
+FontName = Literal[
+    "gothic", "gothic_bold", "myeongjo", "coding", "pen", "gaegu", "poorstory", "singleday"
+]
 FONT_FILES: dict[FontName, str] = {
     "gothic": "NanumGothic-Regular.ttf",
     "gothic_bold": "NanumGothic-Bold.ttf",
     "myeongjo": "NanumMyeongjo-Regular.ttf",
     "coding": "NanumGothicCoding-Regular.ttf",
+    "pen": "NanumPenScript-Regular.ttf",
+    "gaegu": "Gaegu-Regular.ttf",
+    "poorstory": "PoorStory-Regular.ttf",
+    "singleday": "SingleDay-Regular.ttf",
 }
+
+# 손글씨 모사용 (폰트, 크기). 폰트마다 같은 크기에서 글자 크기가 달라 따로 맞춘다
+HAND_FONTS: tuple[tuple[FontName, int], ...] = (
+    ("pen", 40),
+    ("gaegu", 34),
+    ("poorstory", 32),
+    ("singleday", 34),
+)
+HAND_INKS: tuple[tuple[int, int, int], ...] = ((20, 30, 110), (15, 15, 15), (30, 60, 140))
 
 Color = tuple[int, int, int]
 
@@ -72,18 +88,35 @@ def _won(value: int) -> str:
 
 
 class _Canvas:
-    def __init__(self, style: TemplateStyle) -> None:
+    def __init__(self, style: TemplateStyle, handwriting_seed: int | None = None) -> None:
         self.style = style
         self.image = Image.new("RGB", PAGE_SIZE, "white")
         self.draw = ImageDraw.Draw(self.image)
         self.body = _font(style.body_font, 30)
         self.bold = _font("gothic_bold", 30)
         self.overflows: list[str] = []
+        self.rng = random.Random(handwriting_seed)
+        self.handwritten = handwriting_seed is not None
+        hand_name, hand_size = self.rng.choice(HAND_FONTS)
+        self.hand_size = hand_size
+        self.ink = self.rng.choice(HAND_INKS)
+        # 기입란 값에 쓰는 글꼴. 손글씨 모드가 아니면 본문 글꼴과 같다
+        self.value_font = _font(hand_name, hand_size) if self.handwritten else self.body
 
     def text(
-        self, x: int, y: int, value: str, *, bold: bool = False, align: str = "l", width: int = 0
+        self,
+        x: int,
+        y: int,
+        value: str,
+        *,
+        bold: bool = False,
+        align: str = "l",
+        width: int = 0,
+        field: bool = False,
     ) -> None:
-        font = self.bold if bold else self.body
+        """`field`는 값이 들어가는 기입란이다. 손글씨 모드에서는 이 글자만 손글씨체로 쓴다."""
+        handwrite = field and self.handwritten
+        font = self.value_font if handwrite else self.bold if bold else self.body
         text_width = int(self.draw.textlength(value, font=font))
         if width and text_width + CELL_PADDING * 2 > width:
             self.overflows.append(value)
@@ -93,7 +126,29 @@ class _Canvas:
             x = x + (width - text_width) // 2
         else:
             x += 14
-        self.draw.text((x, y + 13), value, font=font, fill=(0, 0, 0))
+        if handwrite:
+            self._handwrite(x, y + 13, value)
+        else:
+            self.draw.text((x, y + 13), value, font=font, fill=(0, 0, 0))
+
+    def _handwrite(self, x: int, y: int, value: str) -> None:
+        """글자마다 위치, 기울기를 조금씩 흔들어 사람이 쓴 느낌을 낸다."""
+        pad = self.hand_size
+        cursor = float(x)
+        for char in value:
+            advance = self.draw.textlength(char, font=self.value_font)
+            if char != " ":
+                layer = Image.new("RGBA", (pad * 3, pad * 3), (0, 0, 0, 0))
+                ImageDraw.Draw(layer).text(
+                    (pad, pad), char, font=self.value_font, fill=(*self.ink, 255)
+                )
+                layer = layer.rotate(
+                    self.rng.uniform(-4.0, 4.0), resample=Image.Resampling.BICUBIC
+                )
+                dx = self.rng.uniform(-1.5, 1.5)
+                dy = self.rng.uniform(-3.0, 3.0)
+                self.image.paste(layer, (round(cursor + dx - pad), round(y + dy - pad)), layer)
+            cursor += advance + self.rng.uniform(-1.0, 2.0)
 
     def box(self, x: int, y: int, w: int, h: int, fill: Color | None = None) -> None:
         self.draw.rectangle((x, y, x + w, y + h), outline=self.style.accent, fill=fill, width=2)
@@ -109,9 +164,18 @@ def _draw_title(c: _Canvas, invoice: Invoice, y: int) -> int:
     c.draw.line((MARGIN, underline_y, PAGE_SIZE[0] - MARGIN, underline_y), c.style.accent, 4)
     d = invoice.issue_date
     date_text = f"{d.year}년 {d.month:02d}월 {d.day:02d}일" if c.style.long_date else d.isoformat()
-    c.text(MARGIN, underline_y + 20, f"문서번호: {invoice.document_no}")
-    c.text(PAGE_SIZE[0] - MARGIN - 500, underline_y + 20, f"작성일자: {date_text}")
+    _draw_labeled(c, MARGIN, underline_y + 20, "문서번호:", invoice.document_no)
+    _draw_labeled(c, PAGE_SIZE[0] - MARGIN - 500, underline_y + 20, "작성일자:", date_text)
     return underline_y + 110
+
+
+def _draw_labeled(c: _Canvas, x: int, y: int, label: str, value: str) -> None:
+    if not c.handwritten:
+        c.text(x, y, f"{label} {value}")
+        return
+    c.text(x, y, label)
+    label_width = int(c.draw.textlength(label, font=c.body))
+    c.text(x + label_width + 10, y, value, field=True)
 
 
 def _party_rows(party: Party) -> list[tuple[str, str]]:
@@ -129,14 +193,14 @@ def _wrap(c: _Canvas, value: str, max_width: int) -> list[str]:
     current = ""
     for word in value.split(" "):
         trial = f"{current} {word}".strip()
-        if c.draw.textlength(trial, font=c.body) <= max_width:
+        if c.draw.textlength(trial, font=c.value_font) <= max_width:
             current = trial
             continue
         if current:
             lines.append(current)
         current = ""
         for char in word:
-            if c.draw.textlength(current + char, font=c.body) > max_width:
+            if c.draw.textlength(current + char, font=c.value_font) > max_width:
                 lines.append(current)
                 current = char
             else:
@@ -158,7 +222,7 @@ def _draw_party(c: _Canvas, x: int, y: int, w: int, label: str, party: Party) ->
         c.box(x + label_w, y, value_w, row_height)
         c.text(x, y, key, align="c", width=label_w)
         for index, line in enumerate(lines):
-            c.text(x + label_w, y + index * LINE_HEIGHT, line, width=value_w)
+            c.text(x + label_w, y + index * LINE_HEIGHT, line, width=value_w, field=True)
         y += row_height
     return y
 
@@ -189,7 +253,9 @@ def _draw_totals(c: _Canvas, invoice: Invoice, y: int) -> int:
         c.box(x, y, w, ROW_HEIGHT, fill=HEADER_FILL)
         c.box(x, y + ROW_HEIGHT, w, ROW_HEIGHT)
         c.text(x, y, label, bold=True, align="c", width=w)
-        c.text(x, y + ROW_HEIGHT, _won(value), bold=label == "합계금액", align="r", width=w)
+        c.text(
+            x, y + ROW_HEIGHT, _won(value), bold=label == "합계금액", align="r", width=w, field=True
+        )
     return y + ROW_HEIGHT * 2 + 50
 
 
@@ -208,12 +274,23 @@ def _draw_items(c: _Canvas, invoice: Invoice, y: int) -> int:
 
     def draw_row(row_y: int, cells: list[str], header: bool, fill: Color | None) -> None:
         x = MARGIN
-        for (_, _, align), w, value in zip(columns, widths, cells, strict=True):
+        for column, ((_, _, align), w, value) in enumerate(
+            zip(columns, widths, cells, strict=True)
+        ):
             if c.style.table == "grid" or header:
                 c.box(x, row_y, w, ROW_HEIGHT, fill=fill)
             elif fill is not None:
                 c.draw.rectangle((x, row_y, x + w, row_y + ROW_HEIGHT), fill=fill)
-            c.text(x, row_y, value, bold=header, align="c" if header else align, width=w)
+            # No 열(0번)은 인쇄된 일련번호라 손글씨로 쓰지 않는다
+            c.text(
+                x,
+                row_y,
+                value,
+                bold=header,
+                align="c" if header else align,
+                width=w,
+                field=not header and column > 0,
+            )
             x += w
         if c.style.table == "lines" and not header:
             line_y = row_y + ROW_HEIGHT
@@ -232,11 +309,11 @@ def _draw_items(c: _Canvas, invoice: Invoice, y: int) -> int:
     return y + 50
 
 
-def _render(invoice: Invoice, template_id: str) -> _Canvas:
+def _render(invoice: Invoice, template_id: str, handwriting_seed: int | None) -> _Canvas:
     style = TEMPLATES.get(template_id)
     if style is None:
         raise ValueError(f"unknown template: {template_id}")
-    canvas = _Canvas(style)
+    canvas = _Canvas(style, handwriting_seed)
     y = _draw_title(canvas, invoice, MARGIN)
     y = _draw_parties(canvas, invoice, y)
     if style.totals_on_top:
@@ -248,10 +325,15 @@ def _render(invoice: Invoice, template_id: str) -> _Canvas:
     return canvas
 
 
-def render_invoice(invoice: Invoice, template_id: str) -> Image.Image:
-    return _render(invoice, template_id).image
+def render_invoice(
+    invoice: Invoice, template_id: str, *, handwriting_seed: int | None = None
+) -> Image.Image:
+    """`handwriting_seed`를 주면 기입란 값을 손글씨체로 흉내 내어 쓴다(실제 필기는 아니다)."""
+    return _render(invoice, template_id, handwriting_seed).image
 
 
-def find_overflows(invoice: Invoice, template_id: str) -> list[str]:
+def find_overflows(
+    invoice: Invoice, template_id: str, *, handwriting_seed: int | None = None
+) -> list[str]:
     """칸 너비를 넘겨 그려진 글자 목록. 비어 있어야 정상이다."""
-    return _render(invoice, template_id).overflows
+    return _render(invoice, template_id, handwriting_seed).overflows

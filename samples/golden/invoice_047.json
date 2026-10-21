@@ -1,0 +1,70 @@
+{
+  "image": "invoice_047.png",
+  "template_id": "serif_simple",
+  "difficulty": "skewed",
+  "writing": "handwritten",
+  "seed": 47,
+  "invoice": {
+    "document_no": "2026-7008",
+    "issue_date": "2026-08-05",
+    "supplier": {
+      "name": "(주) 아름인포제조",
+      "business_number": "461-09-70489",
+      "representative": "김영숙",
+      "address": "울산광역시 서초구 봉은사로 742"
+    },
+    "buyer": {
+      "name": "(주) 보람",
+      "business_number": "667-59-93519",
+      "representative": "김옥자",
+      "address": "세종특별자치시 성북구 잠실거리 351-72 (영일홍동)"
+    },
+    "items": [
+      {
+        "name": "멀티탭 3m",
+        "spec": "6구",
+        "quantity": 43,
+        "unit_price": 12300,
+        "amount": 528900
+      },
+      {
+        "name": "안전화 270mm",
+        "spec": "1켤레",
+        "quantity": 7,
+        "unit_price": 29200,
+        "amount": 204400
+      },
+      {
+        "name": "물티슈 캡형",
+        "spec": "100매",
+        "quantity": 17,
+        "unit_price": 1200,
+        "amount": 20400
+      },
+      {
+        "name": "스프레이 페인트",
+        "spec": "12통",
+        "quantity": 47,
+        "unit_price": 26300,
+        "amount": 1236100
+      },
+      {
+        "name": "볼펜 0.5mm 흑색",
+        "spec": "12자루",
+        "quantity": 1,
+        "unit_price": 4700,
+        "amount": 4700
+      },
+      {
+        "name": "배터리 AA",
+        "spec": "20개",
+        "quantity": 21,
+        "unit_price": 11800,
+        "amount": 247800
+      }
+    ],
+    "supply_amount": 2242300,
+    "tax_amount": 224230,
+    "total_amount": 2466530
+  }
+}

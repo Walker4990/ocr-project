@@ -8,6 +8,11 @@ FONTS = {
     "NanumGothic-Bold.ttf": "nanumgothic",
     "NanumMyeongjo-Regular.ttf": "nanummyeongjo",
     "NanumGothicCoding-Regular.ttf": "nanumgothiccoding",
+    # 손글씨 모사용
+    "NanumPenScript-Regular.ttf": "nanumpenscript",
+    "Gaegu-Regular.ttf": "gaegu",
+    "PoorStory-Regular.ttf": "poorstory",
+    "SingleDay-Regular.ttf": "singleday",
 }
 FONT_DIR = Path(__file__).parent / "fonts"
 

@@ -2,6 +2,7 @@
   "image": "invoice_018.jpg",
   "template_id": "red_totals_top",
   "difficulty": "photo",
+  "writing": "print",
   "seed": 18,
   "invoice": {
     "document_no": "2025-8089",

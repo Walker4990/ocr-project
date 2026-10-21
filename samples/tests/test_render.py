@@ -60,6 +60,37 @@ def test_very_long_address_wraps_instead_of_overflowing(invoice: Invoice, templa
     assert render_invoice(long_invoice, template_id).size == PAGE_SIZE
 
 
+@pytest.mark.parametrize("template_id", TEMPLATE_IDS)
+def test_handwriting_differs_from_print(invoice: Invoice, template_id: str) -> None:
+    printed = render_invoice(invoice, template_id)
+    handwritten = render_invoice(invoice, template_id, handwriting_seed=1)
+    assert handwritten.size == PAGE_SIZE
+    assert ImageChops.difference(printed, handwritten).getbbox() is not None
+
+
+def test_handwriting_is_deterministic_per_seed(invoice: Invoice) -> None:
+    a = render_invoice(invoice, "classic", handwriting_seed=3)
+    b = render_invoice(invoice, "classic", handwriting_seed=3)
+    c = render_invoice(invoice, "classic", handwriting_seed=4)
+    assert ImageChops.difference(a, b).getbbox() is None
+    assert ImageChops.difference(a, c).getbbox() is not None
+
+
+def test_handwriting_keeps_printed_labels(invoice: Invoice) -> None:
+    """라벨(상호, 품목 등)은 인쇄체 그대로이므로 양식의 윗부분 제목 영역은 같다."""
+    printed = render_invoice(invoice, "classic")
+    handwritten = render_invoice(invoice, "classic", handwriting_seed=1)
+    title_area = (0, 0, PAGE_SIZE[0], 190)
+    diff = ImageChops.difference(printed.crop(title_area), handwritten.crop(title_area))
+    assert diff.getbbox() is None
+
+
+@pytest.mark.parametrize("template_id", TEMPLATE_IDS)
+@pytest.mark.parametrize("seed", range(30))
+def test_handwritten_text_stays_inside_cells(seed: int, template_id: str) -> None:
+    assert find_overflows(generate_invoice(seed), template_id, handwriting_seed=seed) == []
+
+
 def test_unknown_template_raises(invoice: Invoice) -> None:
     with pytest.raises(ValueError, match="unknown"):
         render_invoice(invoice, "nope")

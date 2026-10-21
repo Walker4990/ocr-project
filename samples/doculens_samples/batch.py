@@ -4,11 +4,13 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from doculens_samples.data import generate_invoice
-from doculens_samples.degrade import DIFFICULTIES, degrade
-from doculens_samples.labels import GoldenLabel, read_label, write_label
+from doculens_samples.degrade import DIFFICULTIES, Difficulty, degrade
+from doculens_samples.labels import GoldenLabel, Writing, read_label, write_label
 from doculens_samples.render import TEMPLATE_IDS, render_invoice
 
 IMAGE_SUFFIXES = {".png", ".jpg"}
+# 손글씨는 저해상도(low_res)에서 글자가 뭉개져 정답 확인이 어려워 제외한다
+HANDWRITTEN_DIFFICULTIES: tuple[Difficulty, ...] = ("clean", "skewed", "photo")
 # 노이즈가 들어가는 난이도는 PNG로 저장하면 장당 수 MB가 되므로 실제 촬영본처럼 JPEG로 저장한다
 JPEG_DIFFICULTIES = {"low_res", "photo"}
 JPEG_QUALITY = 85
@@ -18,30 +20,52 @@ def _image_files(directory: Path) -> list[Path]:
     return sorted(p for p in directory.iterdir() if p.suffix in IMAGE_SUFFIXES)
 
 
-def generate_golden(out_dir: Path, count: int, seed: int) -> None:
+def _write_item(
+    out_dir: Path,
+    index: int,
+    template_id: str,
+    difficulty: Difficulty,
+    writing: Writing,
+    item_seed: int,
+) -> None:
+    invoice = generate_invoice(item_seed)
+    handwriting_seed = item_seed if writing == "handwritten" else None
+    page = render_invoice(invoice, template_id, handwriting_seed=handwriting_seed)
+    image = degrade(page, difficulty, item_seed)
+
+    stem = f"invoice_{index:03d}"
+    if difficulty in JPEG_DIFFICULTIES:
+        file_name = f"{stem}.jpg"
+        image.save(out_dir / file_name, quality=JPEG_QUALITY)
+    else:
+        file_name = f"{stem}.png"
+        image.save(out_dir / file_name, optimize=True)
+    label = GoldenLabel(
+        image=file_name,
+        template_id=template_id,
+        difficulty=difficulty,
+        writing=writing,
+        seed=item_seed,
+        invoice=invoice,
+    )
+    write_label(label, out_dir / f"{stem}.json")
+
+
+def generate_golden(out_dir: Path, count: int, seed: int, handwritten_count: int = 0) -> None:
+    """인쇄체 `count`장 뒤에 손글씨 모사 `handwritten_count`장을 이어서 만든다.
+
+    손글씨 장은 번호가 count부터 시작하므로 앞선 인쇄체 파일은 달라지지 않는다.
+    """
     out_dir.mkdir(parents=True, exist_ok=True)
     for index in range(count):
-        item_seed = seed * 100_000 + index
         template_id = TEMPLATE_IDS[index % len(TEMPLATE_IDS)]
         difficulty = DIFFICULTIES[(index // len(TEMPLATE_IDS)) % len(DIFFICULTIES)]
-        invoice = generate_invoice(item_seed)
-
-        stem = f"invoice_{index:03d}"
-        image = degrade(render_invoice(invoice, template_id), difficulty, item_seed)
-        if difficulty in JPEG_DIFFICULTIES:
-            file_name = f"{stem}.jpg"
-            image.save(out_dir / file_name, quality=JPEG_QUALITY)
-        else:
-            file_name = f"{stem}.png"
-            image.save(out_dir / file_name, optimize=True)
-        label = GoldenLabel(
-            image=file_name,
-            template_id=template_id,
-            difficulty=difficulty,
-            seed=item_seed,
-            invoice=invoice,
-        )
-        write_label(label, out_dir / f"{stem}.json")
+        _write_item(out_dir, index, template_id, difficulty, "print", seed * 100_000 + index)
+    for offset in range(handwritten_count):
+        index = count + offset
+        template_id = TEMPLATE_IDS[offset % len(TEMPLATE_IDS)]
+        difficulty = HANDWRITTEN_DIFFICULTIES[offset % len(HANDWRITTEN_DIFFICULTIES)]
+        _write_item(out_dir, index, template_id, difficulty, "handwritten", seed * 100_000 + index)
 
 
 def validate_golden(directory: Path) -> list[str]:

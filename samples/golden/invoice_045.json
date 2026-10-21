@@ -1,0 +1,70 @@
+{
+  "image": "invoice_045.jpg",
+  "template_id": "classic",
+  "difficulty": "photo",
+  "writing": "handwritten",
+  "seed": 45,
+  "invoice": {
+    "document_no": "2026-1229",
+    "issue_date": "2026-03-15",
+    "supplier": {
+      "name": "유한회사 월드모두기획",
+      "business_number": "379-54-79954",
+      "representative": "김영식",
+      "address": "광주광역시 동구 양재천로 279"
+    },
+    "buyer": {
+      "name": "주식회사 라온",
+      "business_number": "364-11-49674",
+      "representative": "권영자",
+      "address": "충청북도 충주시 도산대길 366 (상철김권면)"
+    },
+    "items": [
+      {
+        "name": "A4 복사용지 80g",
+        "spec": "500매",
+        "quantity": 20,
+        "unit_price": 4800,
+        "amount": 96000
+      },
+      {
+        "name": "스테이플러 심",
+        "spec": "10곽",
+        "quantity": 3,
+        "unit_price": 2000,
+        "amount": 6000
+      },
+      {
+        "name": "산업용 장갑",
+        "spec": "10켤레",
+        "quantity": 40,
+        "unit_price": 10700,
+        "amount": 428000
+      },
+      {
+        "name": "노트북 거치대",
+        "spec": "1EA",
+        "quantity": 9,
+        "unit_price": 13700,
+        "amount": 123300
+      },
+      {
+        "name": "프린터 토너 카트리지",
+        "spec": "1EA",
+        "quantity": 48,
+        "unit_price": 72800,
+        "amount": 3494400
+      },
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 14,
+        "unit_price": 3900,
+        "amount": 54600
+      }
+    ],
+    "supply_amount": 4202300,
+    "tax_amount": 420230,
+    "total_amount": 4622530
+  }
+}

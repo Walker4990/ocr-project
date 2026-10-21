@@ -50,6 +50,21 @@ def test_generated_set_is_valid(golden_dir: Path) -> None:
     assert validate_golden(golden_dir) == []
 
 
+def test_handwritten_extras_are_added_without_changing_existing_files(
+    golden_dir: Path, tmp_path: Path
+) -> None:
+    generate_golden(tmp_path, count=COUNT, seed=0, handwritten_count=5)
+    for original in golden_dir.iterdir():
+        assert (tmp_path / original.name).read_bytes() == original.read_bytes()
+    labels = [read_label(p) for p in tmp_path.glob("*.json")]
+    handwritten = [label for label in labels if label.writing == "handwritten"]
+    assert len(labels) == COUNT + 5
+    assert len(handwritten) == 5
+    assert {label.template_id for label in handwritten} == set(TEMPLATE_IDS)
+    assert all(label.writing == "print" for label in labels if label not in handwritten)
+    assert validate_golden(tmp_path) == []
+
+
 def test_generation_is_reproducible(golden_dir: Path, tmp_path: Path) -> None:
     generate_golden(tmp_path, count=COUNT, seed=0)
     for original in golden_dir.iterdir():

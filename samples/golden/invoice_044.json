@@ -1,0 +1,77 @@
+{
+  "image": "invoice_044.png",
+  "template_id": "mono_receipt",
+  "difficulty": "skewed",
+  "writing": "handwritten",
+  "seed": 44,
+  "invoice": {
+    "document_no": "2025-5552",
+    "issue_date": "2025-03-17",
+    "supplier": {
+      "name": "(주) 넥스트시너지센터",
+      "business_number": "519-67-88798",
+      "representative": "김영호",
+      "address": "대구광역시 강동구 가락96거리 347"
+    },
+    "buyer": {
+      "name": "주식회사 글로벌윈드기술",
+      "business_number": "819-15-28949",
+      "representative": "이숙자",
+      "address": "서울특별시 은평구 봉은사73길 766-32 (동현성리)"
+    },
+    "items": [
+      {
+        "name": "LED 형광등 20W",
+        "spec": "1EA",
+        "quantity": 11,
+        "unit_price": 3100,
+        "amount": 34100
+      },
+      {
+        "name": "클리어 파일",
+        "spec": "20매",
+        "quantity": 33,
+        "unit_price": 4400,
+        "amount": 145200
+      },
+      {
+        "name": "A4 복사용지 80g",
+        "spec": "500매",
+        "quantity": 45,
+        "unit_price": 5400,
+        "amount": 243000
+      },
+      {
+        "name": "노트북 거치대",
+        "spec": "1EA",
+        "quantity": 25,
+        "unit_price": 28200,
+        "amount": 705000
+      },
+      {
+        "name": "프린터 토너 카트리지",
+        "spec": "1EA",
+        "quantity": 26,
+        "unit_price": 105500,
+        "amount": 2743000
+      },
+      {
+        "name": "배터리 AA",
+        "spec": "20개",
+        "quantity": 45,
+        "unit_price": 10900,
+        "amount": 490500
+      },
+      {
+        "name": "스프레이 페인트",
+        "spec": "12통",
+        "quantity": 23,
+        "unit_price": 22300,
+        "amount": 512900
+      }
+    ],
+    "supply_amount": 4873700,
+    "tax_amount": 487370,
+    "total_amount": 5361070
+  }
+}

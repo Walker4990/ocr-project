@@ -13,9 +13,10 @@
 ## 골든셋 (태스크 6 산출물)
 
 - 생성기: `samples/doculens_samples/`, 테스트: `samples/tests/`, 설명: `samples/README.md`
-- 결과물 `samples/golden/`: 40장 + 라벨 JSON 40개(10.8MB)를 **커밋했다** (사용자 결정). 양식 5종 x 난이도 4종(clean/skewed/low_res/photo)이 각 2장씩이다
+- 결과물 `samples/golden/`: 50장 + 라벨 JSON 50개(14.8MB)를 **커밋했다** (사용자 결정). 인쇄체 40장(`invoice_000~039`)은 양식 5종 x 난이도 4종(clean/skewed/low_res/photo)이 각 2장씩이고, 손글씨 모사 10장(`invoice_040~049`, 라벨 `writing: handwritten`)이 이어진다
+- 손글씨는 폰트로 흉내 낸 모사다(실제 필기 아님). 값 칸만 손글씨체로 쓰고 라벨과 No 열은 인쇄체다. 이 데이터로 얻은 정확도를 실제 손글씨 성능처럼 말하지 않는다. 실제 필기 샘플이 필요하면 직접 촬영하고 라벨을 따로 단다
 - 라벨 스키마는 `samples/doculens_samples/labels.py`의 `GoldenLabel` (이미지 파일명, 양식, 난이도, seed, 거래명세서 전체 필드와 품목 배열). bbox 라벨은 아직 없다. 9번 이후 위치 정확도가 필요해지면 렌더러에서 텍스트 좌표를 기록하도록 확장한다
-- 재생성: `samples/`에서 `uv run --project ..\apps\api python -m doculens_samples --count 40` (seed 고정이라 같은 결과). 폰트는 `python samples/fetch_fonts.py`로 받는다 (`samples/fonts/`는 gitignore)
+- 재생성: `samples/`에서 `uv run --project ..\apps\api python -m doculens_samples --count 40 --handwritten 10` (seed 고정이라 같은 결과). 폰트는 `python samples/fetch_fonts.py`로 받는다 (`samples/fonts/`는 gitignore)
 - 렌더링은 Pillow, 가짜 데이터는 Faker(ko_KR), 노이즈는 numpy다 (apps/api dev 의존성). 사업자번호는 검증 숫자를 맞춰 만든 임의 값이라 실제 사업자와 우연히 겹칠 수 있다
 - **용량 함정**: 노이즈가 있는 이미지를 PNG로 저장하면 장당 7MB가 된다. low_res/photo는 JPEG(품질 85), clean/skewed는 PNG로 저장한다. 이미지 수를 늘릴 때 용량 상한 테스트(장당 1MB)를 확인한다
 - 칸 넘침: 긴 주소는 칸 너비에 맞춰 줄바꿈하고 박스 높이를 늘린다. `find_overflows()`가 칸을 넘긴 글자를 돌려주고, 테스트가 양식 5종 x seed 100개로 검사한다 (이 검사가 없던 때는 좌우 배치 양식에서 주소가 옆 칸을 침범했다)
@@ -61,7 +62,7 @@
 
 | 시점 | 내용 | 현재 의견 |
 |---|---|---|
-| 9번 이후 | 손글씨 골든셋: 현재는 전부 인쇄체. 손글씨 폰트(나눔펜, 개구, 푸어스토리 등 OFL)로 기입란을 채운 양식을 추가할지 | 제안 후 확인. 폰트 모사라 실제 필기와 다름을 README에 밝힌다 |
+| 9번 이후 | 실제 필기(손글씨) 샘플 확보 여부. 모사 10장은 이미 있음 | 일반 OCR 엔진은 한글 손글씨에 약해 정확도가 낮게 나올 가능성이 높다. 9번 결과를 보고 판단 |
 | 7번 | psycopg 3 추가 (확정됨, 설치만 남음) | - |
 | 10번 | PDF 분리: pypdfium2 vs PyMuPDF | pypdfium2 (PyMuPDF는 AGPL) |
 | 14번 이후 | 표 인식이 충분한지, LLM 폴백 비중 | 벤치마크 결과로 판단 |

@@ -1,10 +1,13 @@
 """이미지 한 장에 대응하는 정답 라벨(JSON)."""
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
 from doculens_samples.degrade import Difficulty
 from doculens_samples.schema import Invoice
+
+Writing = Literal["print", "handwritten"]
 
 
 class GoldenLabel(BaseModel):
@@ -13,6 +16,8 @@ class GoldenLabel(BaseModel):
     image: str
     template_id: str
     difficulty: Difficulty
+    # 손글씨는 폰트로 흉내 낸 모사 데이터다. 이전 라벨에는 필드가 없어 기본값은 인쇄체다
+    writing: Writing = "print"
     seed: int
     invoice: Invoice
 

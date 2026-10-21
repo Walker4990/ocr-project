@@ -2,6 +2,7 @@
   "image": "invoice_004.png",
   "template_id": "mono_receipt",
   "difficulty": "clean",
+  "writing": "print",
   "seed": 4,
   "invoice": {
     "document_no": "2026-8793",

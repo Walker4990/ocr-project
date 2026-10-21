@@ -2,6 +2,7 @@
   "image": "invoice_032.jpg",
   "template_id": "serif_simple",
   "difficulty": "low_res",
+  "writing": "print",
   "seed": 32,
   "invoice": {
     "document_no": "2026-5413",

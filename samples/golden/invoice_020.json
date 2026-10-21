@@ -2,6 +2,7 @@
   "image": "invoice_020.png",
   "template_id": "classic",
   "difficulty": "clean",
+  "writing": "print",
   "seed": 20,
   "invoice": {
     "document_no": "2025-5387",

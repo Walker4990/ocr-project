@@ -1,0 +1,56 @@
+{
+  "image": "invoice_042.jpg",
+  "template_id": "serif_simple",
+  "difficulty": "photo",
+  "writing": "handwritten",
+  "seed": 42,
+  "invoice": {
+    "document_no": "2025-9196",
+    "issue_date": "2025-01-28",
+    "supplier": {
+      "name": "(주) 가야",
+      "business_number": "755-15-04094",
+      "representative": "김민서",
+      "address": "부산광역시 영등포구 도산대1길 617"
+    },
+    "buyer": {
+      "name": "주식회사 한가람항공",
+      "business_number": "860-36-40121",
+      "representative": "박서준",
+      "address": "대구광역시 강남구 삼성23거리 지하95"
+    },
+    "items": [
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 28,
+        "unit_price": 5300,
+        "amount": 148400
+      },
+      {
+        "name": "프린터 토너 카트리지",
+        "spec": "1EA",
+        "quantity": 2,
+        "unit_price": 48200,
+        "amount": 96400
+      },
+      {
+        "name": "스프레이 페인트",
+        "spec": "12통",
+        "quantity": 14,
+        "unit_price": 16300,
+        "amount": 228200
+      },
+      {
+        "name": "스테이플러 심",
+        "spec": "10곽",
+        "quantity": 33,
+        "unit_price": 1300,
+        "amount": 42900
+      }
+    ],
+    "supply_amount": 515900,
+    "tax_amount": 51590,
+    "total_amount": 567490
+  }
+}

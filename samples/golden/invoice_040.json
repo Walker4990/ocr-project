@@ -1,0 +1,56 @@
+{
+  "image": "invoice_040.png",
+  "template_id": "classic",
+  "difficulty": "clean",
+  "writing": "handwritten",
+  "seed": 40,
+  "invoice": {
+    "document_no": "2025-9909",
+    "issue_date": "2025-06-30",
+    "supplier": {
+      "name": "(주) 마음발해상사",
+      "business_number": "570-75-85845",
+      "representative": "이중수",
+      "address": "경기도 고성군 도산대길 181 (상호차김마을)"
+    },
+    "buyer": {
+      "name": "(주) 씨앤씨",
+      "business_number": "133-32-46272",
+      "representative": "홍숙자",
+      "address": "인천광역시 송파구 양재천길 713-38 (은서김최리)"
+    },
+    "items": [
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 34,
+        "unit_price": 3500,
+        "amount": 119000
+      },
+      {
+        "name": "종이컵 6.5oz",
+        "spec": "1000개",
+        "quantity": 4,
+        "unit_price": 5800,
+        "amount": 23200
+      },
+      {
+        "name": "멀티탭 3m",
+        "spec": "6구",
+        "quantity": 40,
+        "unit_price": 9500,
+        "amount": 380000
+      },
+      {
+        "name": "OPP 테이프 48mm",
+        "spec": "50롤",
+        "quantity": 4,
+        "unit_price": 29700,
+        "amount": 118800
+      }
+    ],
+    "supply_amount": 641000,
+    "tax_amount": 64100,
+    "total_amount": 705100
+  }
+}

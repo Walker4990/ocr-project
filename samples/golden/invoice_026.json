@@ -2,6 +2,7 @@
   "image": "invoice_026.png",
   "template_id": "blue_stacked",
   "difficulty": "skewed",
+  "writing": "print",
   "seed": 26,
   "invoice": {
     "document_no": "2026-0684",

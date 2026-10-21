@@ -55,6 +55,18 @@ def test_rejects_inconsistent_item_amount(invoice: Invoice) -> None:
         Invoice.model_validate(data)
 
 
+def test_writing_defaults_to_print_and_accepts_handwritten(label: GoldenLabel) -> None:
+    assert label.writing == "print"
+    handwritten = label.model_copy(update={"writing": "handwritten"})
+    assert GoldenLabel.model_validate_json(handwritten.model_dump_json()).writing == "handwritten"
+
+
+def test_old_label_without_writing_field_still_loads(label: GoldenLabel) -> None:
+    data = json.loads(label.model_dump_json())
+    del data["writing"]
+    assert GoldenLabel.model_validate(data).writing == "print"
+
+
 def test_rejects_unknown_difficulty(invoice: Invoice) -> None:
     with pytest.raises(ValidationError):
         GoldenLabel(

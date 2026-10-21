@@ -1,0 +1,91 @@
+{
+  "image": "invoice_046.png",
+  "template_id": "blue_stacked",
+  "difficulty": "clean",
+  "writing": "handwritten",
+  "seed": 46,
+  "invoice": {
+    "document_no": "2026-1793",
+    "issue_date": "2026-07-12",
+    "supplier": {
+      "name": "유한회사 가온센터",
+      "business_number": "179-52-06541",
+      "representative": "김옥자",
+      "address": "서울특별시 용산구 가락0길 541"
+    },
+    "buyer": {
+      "name": "(주) 신라한가람출판",
+      "business_number": "703-76-37445",
+      "representative": "박준영",
+      "address": "제주특별자치도 부여군 선릉길 455-92 (성진최양마을)"
+    },
+    "items": [
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 2,
+        "unit_price": 3600,
+        "amount": 7200
+      },
+      {
+        "name": "배터리 AA",
+        "spec": "20개",
+        "quantity": 36,
+        "unit_price": 6800,
+        "amount": 244800
+      },
+      {
+        "name": "스프레이 페인트",
+        "spec": "12통",
+        "quantity": 34,
+        "unit_price": 21500,
+        "amount": 731000
+      },
+      {
+        "name": "볼펜 0.5mm 흑색",
+        "spec": "12자루",
+        "quantity": 46,
+        "unit_price": 4000,
+        "amount": 184000
+      },
+      {
+        "name": "A4 복사용지 80g",
+        "spec": "500매",
+        "quantity": 26,
+        "unit_price": 4700,
+        "amount": 122200
+      },
+      {
+        "name": "안전화 270mm",
+        "spec": "1켤레",
+        "quantity": 24,
+        "unit_price": 52500,
+        "amount": 1260000
+      },
+      {
+        "name": "물티슈 캡형",
+        "spec": "100매",
+        "quantity": 31,
+        "unit_price": 1400,
+        "amount": 43400
+      },
+      {
+        "name": "무선 마우스",
+        "spec": "1EA",
+        "quantity": 5,
+        "unit_price": 20900,
+        "amount": 104500
+      },
+      {
+        "name": "화이트보드 마커",
+        "spec": "10본",
+        "quantity": 48,
+        "unit_price": 8900,
+        "amount": 427200
+      }
+    ],
+    "supply_amount": 3124300,
+    "tax_amount": 312430,
+    "total_amount": 3436730
+  }
+}
