@@ -12,6 +12,8 @@ PAGE_SIZE = (1654, 2339)  # A4, 200dpi
 FONT_DIR = Path(__file__).resolve().parent.parent / "fonts"
 MARGIN = 110
 ROW_HEIGHT = 62
+LINE_HEIGHT = 42  # 칸 안에서 줄바꿈된 두 번째 줄부터 더해지는 높이
+CELL_PADDING = 14
 HEADER_FILL = (235, 235, 235)
 
 FontName = Literal["gothic", "gothic_bold", "myeongjo", "coding"]
@@ -76,12 +78,15 @@ class _Canvas:
         self.draw = ImageDraw.Draw(self.image)
         self.body = _font(style.body_font, 30)
         self.bold = _font("gothic_bold", 30)
+        self.overflows: list[str] = []
 
     def text(
         self, x: int, y: int, value: str, *, bold: bool = False, align: str = "l", width: int = 0
     ) -> None:
         font = self.bold if bold else self.body
         text_width = int(self.draw.textlength(value, font=font))
+        if width and text_width + CELL_PADDING * 2 > width:
+            self.overflows.append(value)
         if align == "r":
             x = x + width - 14 - text_width
         elif align == "c":
@@ -118,17 +123,43 @@ def _party_rows(party: Party) -> list[tuple[str, str]]:
     ]
 
 
+def _wrap(c: _Canvas, value: str, max_width: int) -> list[str]:
+    """공백 단위로 줄바꿈하고, 공백 없이 너무 긴 단어는 글자 단위로 자른다."""
+    lines: list[str] = []
+    current = ""
+    for word in value.split(" "):
+        trial = f"{current} {word}".strip()
+        if c.draw.textlength(trial, font=c.body) <= max_width:
+            current = trial
+            continue
+        if current:
+            lines.append(current)
+        current = ""
+        for char in word:
+            if c.draw.textlength(current + char, font=c.body) > max_width:
+                lines.append(current)
+                current = char
+            else:
+                current += char
+    lines.append(current)
+    return lines
+
+
 def _draw_party(c: _Canvas, x: int, y: int, w: int, label: str, party: Party) -> int:
     label_w = 170
+    value_w = w - label_w
     c.box(x, y, w, ROW_HEIGHT, fill=HEADER_FILL)
     c.text(x, y, label, bold=True, align="c", width=w)
     y += ROW_HEIGHT
     for key, value in _party_rows(party):
-        c.box(x, y, label_w, ROW_HEIGHT)
-        c.box(x + label_w, y, w - label_w, ROW_HEIGHT)
+        lines = _wrap(c, value, value_w - CELL_PADDING * 2)
+        row_height = ROW_HEIGHT + (len(lines) - 1) * LINE_HEIGHT
+        c.box(x, y, label_w, row_height)
+        c.box(x + label_w, y, value_w, row_height)
         c.text(x, y, key, align="c", width=label_w)
-        c.text(x + label_w, y, value)
-        y += ROW_HEIGHT
+        for index, line in enumerate(lines):
+            c.text(x + label_w, y + index * LINE_HEIGHT, line, width=value_w)
+        y += row_height
     return y
 
 
@@ -137,9 +168,9 @@ def _draw_parties(c: _Canvas, invoice: Invoice, y: int) -> int:
     if c.style.parties == "side_by_side":
         gap = 40
         w = (inner - gap) // 2
-        end = _draw_party(c, MARGIN, y, w, "공급자", invoice.supplier)
-        _draw_party(c, MARGIN + w + gap, y, w, "공급받는자", invoice.buyer)
-        return end + 50
+        left_end = _draw_party(c, MARGIN, y, w, "공급자", invoice.supplier)
+        right_end = _draw_party(c, MARGIN + w + gap, y, w, "공급받는자", invoice.buyer)
+        return max(left_end, right_end) + 50
     end = _draw_party(c, MARGIN, y, inner, "공급자", invoice.supplier)
     end = _draw_party(c, MARGIN, end + 30, inner, "공급받는자", invoice.buyer)
     return end + 50
@@ -201,7 +232,7 @@ def _draw_items(c: _Canvas, invoice: Invoice, y: int) -> int:
     return y + 50
 
 
-def render_invoice(invoice: Invoice, template_id: str) -> Image.Image:
+def _render(invoice: Invoice, template_id: str) -> _Canvas:
     style = TEMPLATES.get(template_id)
     if style is None:
         raise ValueError(f"unknown template: {template_id}")
@@ -214,4 +245,13 @@ def render_invoice(invoice: Invoice, template_id: str) -> Image.Image:
     else:
         y = _draw_items(canvas, invoice, y)
         _draw_totals(canvas, invoice, y)
-    return canvas.image
+    return canvas
+
+
+def render_invoice(invoice: Invoice, template_id: str) -> Image.Image:
+    return _render(invoice, template_id).image
+
+
+def find_overflows(invoice: Invoice, template_id: str) -> list[str]:
+    """칸 너비를 넘겨 그려진 글자 목록. 비어 있어야 정상이다."""
+    return _render(invoice, template_id).overflows
