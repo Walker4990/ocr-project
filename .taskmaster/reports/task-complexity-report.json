@@ -1,0 +1,269 @@
+{
+	"meta": {
+		"generatedAt": "2026-10-21T13:18:18.586Z",
+		"tasksAnalyzed": 32,
+		"totalTasks": 32,
+		"analysisCount": 32,
+		"thresholdScore": 5,
+		"projectName": "DocuLens",
+		"usedResearch": true
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "모노레포 및 개발 환경 초기 설정",
+			"complexityScore": 4,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "모노레포 설정을 다음 단계로 세분화: 1) 디렉터리 구조 생성 및 기본 파일 작성, 2) Python uv 환경 설정 및 pyproject.toml 구성, 3) npm 워크스페이스 설정 및 Next.js 프로젝트 생성, 4) 린터/포매터 설정(ruff, mypy/pyright, ESLint), 5) .gitignore 및 .env.example 작성, 6) 전체 환경 검증 및 빌드 테스트",
+			"reasoning": "모노레포 설정은 여러 도구(uv, npm, ruff, mypy)를 조합하고, Python과 Node.js 두 생태계를 동시에 구성해야 합니다. 각 도구의 설정 파일 작성과 의존성 관리가 필요하며, 버전 고정과 워크스페이스 구조 설계가 중요합니다. 표준 패턴이 있지만 초기 설정에서 발생하는 의존성 충돌이나 버전 호환성 문제를 해결해야 할 수 있습니다."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Docker Compose 인프라 구성",
+			"complexityScore": 5,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Docker 인프라 구성을 다음으로 세분화: 1) docker-compose.yml 기본 구조 및 네트워크 설정, 2) PostgreSQL 서비스 설정(볼륨, 환경변수), 3) Redis 서비스 설정, 4) FastAPI용 Dockerfile 및 api 서비스 설정, 5) arq 워커 서비스 설정, 6) Next.js용 Dockerfile 및 web 서비스 설정, 7) 헬스체크 및 전체 스택 통합 테스트",
+			"reasoning": "5개 서비스를 조율하고, 각각의 Dockerfile 작성, 환경변수 주입, 볼륨 마운트, 네트워크 설정을 해야 합니다. 특히 멀티 스테이지 빌드, 레이어 캐싱 최적화, 서비스 간 의존성 순서(depends_on)를 고려해야 하며, 개발/프로덕션 환경 분리도 필요합니다. 헬스체크 설정과 로그 수집도 포함됩니다."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "FastAPI 기본 골격 및 미들웨어 구성",
+			"complexityScore": 6,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "FastAPI 골격을 다음으로 세분화: 1) FastAPI 앱 초기화 및 기본 설정, 2) requestId 미들웨어 구현 및 테스트, 3) 도메인 예외 클래스 정의(exceptions.py), 4) 전역 예외 핸들러 구현 및 테스트, 5) 구조화 로깅 설정(structlog), 6) /health 엔드포인트 구현(DB/Redis 연결 체크), 7) CORS 미들웨어 설정, 8) 레이트 리밋 미들웨어 설정 및 전체 통합 테스트",
+			"reasoning": "미들웨어 체인 순서가 중요하고, requestId 전파 메커니즘, 구조화 로깅, 예외 핸들링이 서로 연동되어야 합니다. 특히 도메인 예외를 HTTP 응답으로 변환하는 로직, 로그 컨텍스트 관리, 헬스체크에서 외부 의존성(DB, Redis) 연결 확인 등 여러 레이어가 얽혀 있습니다. TDD로 각 미들웨어를 개별 테스트해야 합니다."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Next.js 프론트엔드 기본 구조 및 UI 라이브러리 설정",
+			"complexityScore": 5,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Next.js 프론트 설정을 다음으로 세분화: 1) Next.js 15 프로젝트 생성 및 App Router 구조 설정, 2) Tailwind CSS 설치 및 설정, 3) shadcn/ui 설치 및 components.json 구성, 4) 기본 레이아웃 및 홈 페이지 작성, 5) Zustand 스토어 기본 구조 작성, 6) API 클라이언트 유틸리티 작성(requestId 전파), 7) TypeScript strict 모드 설정 및 빌드 검증",
+			"reasoning": "Next.js 15의 새로운 App Router 패턴, shadcn/ui 컴포넌트 설정, Zustand 상태 관리 구조, API 클라이언트 타입 안전성 등을 모두 고려해야 합니다. 특히 API 클라이언트에서 requestId 전파와 에러 핸들링을 표준화하고, TypeScript strict 모드에서 타입 안전성을 확보해야 합니다."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "GitHub Actions CI 파이프라인 구성",
+			"complexityScore": 5,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "CI 파이프라인을 다음으로 세분화: 1) 워크플로우 파일 구조 및 트리거 설정, 2) 백엔드 잡 구성(uv sync, pytest, 코드 커버리지), 3) 백엔드 린트/타입 체크 잡(ruff, mypy/pyright), 4) 프론트엔드 잡 구성(npm ci, test, tsc, lint), 5) Docker 이미지 빌드 테스트 잡, 6) 캐싱 최적화 및 병렬 실행 설정",
+			"reasoning": "백엔드와 프론트엔드 각각의 테스트/린트/타입 체크를 병렬로 실행하고, Docker 이미지 빌드까지 포함해야 합니다. 의존성 캐싱(uv, npm), 아티팩트 업로드, 실패 시 알림, 병렬 매트릭스 전략 등을 고려해야 합니다. 특히 Docker 빌드 시간을 줄이기 위한 레이어 캐싱과 멀티 스테이지 빌드 검증이 필요합니다."
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "합성 거래명세서 골든셋 생성기 작성",
+			"complexityScore": 7,
+			"recommendedSubtasks": 9,
+			"expansionPrompt": "골든셋 생성기를 다음으로 세분화: 1) 템플릿 디자인(HTML/CSS 또는 reportlab, 5종 이상), 2) 가짜 데이터 생성 로직(faker-kr 또는 수동 데이터셋), 3) 깨끗한 스캔 렌더링, 4) 기울어짐 변형(회전 변환), 5) 저해상도 변형, 6) 스마트폰 촬영 시뮬레이션(원근 변환, 그림자, 노이즈), 7) 정답 라벨 JSON 자동 생성 로직, 8) 30장 이상 배치 생성 스크립트, 9) 생성 결과 검증(이미지/JSON 쌍 확인)",
+			"reasoning": "5종 이상 템플릿을 디자인하고, 각 템플릿에 대해 여러 난이도 변형(기울기, 해상도, 촬영 왜곡)을 적용해야 합니다. 특히 원근 변환, 그림자, 노이즈 추가 등 이미지 처리 기술이 필요하고, 정답 라벨을 자동으로 생성하려면 렌더링 시 좌표를 추적해야 합니다. OpenCV, Pillow 등 이미지 라이브러리 활용과 템플릿 엔진 선택이 복잡합니다."
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "DB 스키마 및 마이그레이션 설정",
+			"complexityScore": 5,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "DB 스키마를 다음으로 세분화: 1) SQLAlchemy 기본 설정 및 Base 클래스 정의, 2) Document 모델 정의 및 인덱스 설정, 3) OcrResult 모델 정의, 4) Extraction 및 LineItem 모델 정의(관계 설정), 5) ReviewEdit 모델 정의, 6) Alembic 초기화 및 첫 마이그레이션 생성, 7) 마이그레이션 적용 및 모델 CRUD 테스트",
+			"reasoning": "5개 모델을 정의하고, 관계(Foreign Key, OneToMany 등)를 설정하며, 인덱스를 적절히 배치해야 합니다. SQLAlchemy 2.x의 새로운 스타일(mapped_column, Mapped 타입)을 사용하고, Alembic 마이그레이션 자동 생성/적용을 검증해야 합니다. JSON 필드, 타임스탬프, Enum 타입 등 다양한 컬럼 타입을 다룹니다."
+		},
+		{
+			"taskId": 8,
+			"taskTitle": "OcrEngine Protocol 및 인터페이스 정의",
+			"complexityScore": 3,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "OcrEngine Protocol을 다음으로 세분화: 1) OcrPage, OcrToken 데이터 클래스 정의, 2) OcrEngine Protocol 정의(recognize, name, supports_gpu), 3) 엔진 등록 메커니즘 구현(레지스트리 패턴), 4) 환경변수 기반 엔진 선택 로직, 5) 더미 엔진 구현 및 인터페이스 검증 테스트",
+			"reasoning": "Protocol 정의는 비교적 단순하지만, 엔진 등록/선택 메커니즘을 설계하고, 타입 안전성을 확보하며, 환경변수 기반 동적 로딩을 구현해야 합니다. 데이터 클래스 설계와 Protocol 명세가 추후 구현체에 영향을 주므로 신중해야 합니다."
+		},
+		{
+			"taskId": 9,
+			"taskTitle": "PaddleOCR v5 한국어 어댑터 구현",
+			"complexityScore": 6,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "PaddleOCR 어댑터를 다음으로 세분화: 1) PaddleOCR 초기화 로직 작성(한국어 모델, GPU 설정), 2) recognize 메서드 구현(이미지 입력 처리), 3) PaddleOCR 출력을 OcrPage로 변환하는 로직, 4) 처리시간 측정 및 로깅, 5) TDD: 실패하는 테스트 작성(샘플 이미지 인식), 6) 테스트 통과를 위한 구현, 7) 토큰 개수 및 신뢰도 범위 검증 테스트",
+			"reasoning": "PaddleOCR 라이브러리의 출력 형식(bbox 좌표, 텍스트, 신뢰도)을 자체 OcrPage 구조로 변환하고, GPU 설정과 모델 로딩을 관리해야 합니다. TDD로 먼저 실패하는 테스트를 작성하고, 골든셋 이미지를 사용해 검증해야 하며, 처리시간 측정 로직도 포함됩니다."
+		},
+		{
+			"taskId": 10,
+			"taskTitle": "이미지 전처리 파이프라인 구현",
+			"complexityScore": 6,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "전처리 파이프라인을 다음으로 세분화: 1) OpenCV 기반 기울기 보정(Hough 변환), 2) 대비 개선(CLAHE), 3) 적응형 임계화, 4) 리사이즈 로직(긴 변 기준), 5) PDF 페이지 분리(pypdfium2/PyMuPDF 선택 및 구현), 6) 전처리 파이프라인 조합 함수, 7) TDD: 기울어진 이미지 보정 검증, 8) 전처리 전후 이미지 비교 테스트",
+			"reasoning": "OpenCV를 사용한 여러 이미지 처리 기법(deskew, CLAHE, 임계화)을 구현하고, PDF 라이브러리 선택(라이선스 검토)이 필요합니다. 각 전처리 단계의 파라미터 튜닝과 파이프라인 조합 순서가 중요하며, TDD로 기울기 보정 정확도를 검증해야 합니다."
+		},
+		{
+			"taskId": 11,
+			"taskTitle": "PaddlePaddle 표 구조 인식 통합",
+			"complexityScore": 7,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "표 구조 인식을 다음으로 세분화: 1) PP-Structure 초기화 및 환경 설정, 2) 표 영역 감지 로직 구현, 3) 셀 단위 bbox 추출, 4) 셀 내 텍스트 추출 및 OCR 연동, 5) OcrPage에 표 구조 정보 추가(행/열 그리드), 6) TDD: 표 포함 샘플 문서로 테스트 작성, 7) 테스트 통과를 위한 구현, 8) 정답 라벨 대비 셀 개수/위치 정확도 검증",
+			"reasoning": "PP-StructureV3는 표 영역 감지와 셀 분할을 수행하며, 이를 OcrPage 구조에 통합해야 합니다. 표 인식 결과(셀 bbox, 행/열 인덱스)를 표준화하고, OCR 토큰과 매칭하는 로직이 복잡합니다. 골든셋의 정답 라벨과 비교하여 정확도를 측정해야 합니다."
+		},
+		{
+			"taskId": 12,
+			"taskTitle": "Tesseract 베이스라인 어댑터 구현",
+			"complexityScore": 3,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Tesseract 어댑터를 다음으로 세분화: 1) pytesseract 설치 및 한국어 언어팩 설정, 2) recognize 메서드 구현, 3) Tesseract 출력을 OcrPage로 변환, 4) 처리시간 측정 및 PaddleOCR와 비교 테스트",
+			"reasoning": "Tesseract는 비교적 단순한 API를 제공하므로, OcrEngine Protocol에 맞춰 래핑하고 출력을 변환하는 정도입니다. 한국어 언어팩 설정과 처리시간 측정만 추가하면 됩니다."
+		},
+		{
+			"taskId": 13,
+			"taskTitle": "PaddleOCR-VL GPU 어댑터 구현 (선택)",
+			"complexityScore": 4,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "PaddleOCR-VL 어댑터를 다음으로 세분화: 1) GPU 감지 로직 구현(torch.cuda.is_available), 2) PaddleOCR-VL 초기화 및 GPU 설정, 3) recognize 메서드 구현, 4) supports_gpu = True 설정 및 엔진 등록, 5) GPU/CPU 환경별 테스트",
+			"reasoning": "GPU 환경에서만 동작하는 선택 기능이므로, GPU 감지 로직과 조건부 등록이 필요합니다. PaddleOCR-VL의 설정이 v5와 유사하지만, GPU 메모리 관리와 에러 핸들링을 고려해야 합니다."
+		},
+		{
+			"taskId": 14,
+			"taskTitle": "OCR 벤치마크 스크립트 작성",
+			"complexityScore": 7,
+			"recommendedSubtasks": 9,
+			"expansionPrompt": "OCR 벤치마크를 다음으로 세분화: 1) 골든셋 로딩 및 정답 라벨 파싱, 2) 각 엔진별 실행 루프, 3) CER 계산 로직(editdistance), 4) 필드 정확도 계산(정답 라벨 비교), 5) 표 셀 정확도 계산(IoU 기반 매칭), 6) 처리시간 측정(평균, 중앙값, P95), 7) 마크다운 표 생성 로직, 8) 벤치마크 실행 스크립트, 9) results.md 파일 생성 및 검증",
+			"reasoning": "여러 엔진을 골든셋 30장에 대해 실행하고, CER, 필드 정확도, 표 셀 정확도, 처리시간을 각각 측정해야 합니다. IoU 계산, editdistance 라이브러리 사용, 통계 계산(중앙값, 백분위수), 마크다운 테이블 포매팅 등 다양한 로직이 필요합니다."
+		},
+		{
+			"taskId": 15,
+			"taskTitle": "규칙 기반 헤더 필드 추출기 구현",
+			"complexityScore": 6,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "헤더 필드 추출기를 다음으로 세분화: 1) 키워드 매칭 로직 구현(발행일, 문서번호 등), 2) 정규식 패턴 정의(날짜, 사업자등록번호), 3) 신뢰도 계산 로직(키워드 거리, OCR 신뢰도), 4) Pydantic 스키마 정의(HeaderFields), 5) 추출 함수 구현, 6) TDD: 샘플 문서로 테스트 작성, 7) 테스트 통과를 위한 구현, 8) 정답 라벨 대비 필드별 정확도 검증",
+			"reasoning": "키워드 매칭과 정규식 패턴을 조합하여 여러 헤더 필드를 추출해야 합니다. 특히 날짜 형식, 사업자등록번호 패턴이 다양하고, OCR 오류로 인한 오타를 고려한 퍼지 매칭이 필요할 수 있습니다. 신뢰도 계산 로직도 휴리스틱 기반으로 설계해야 합니다."
+		},
+		{
+			"taskId": 16,
+			"taskTitle": "규칙 기반 품목 표 파서 구현",
+			"complexityScore": 7,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "품목 표 파서를 다음으로 세분화: 1) 열 헤더 매핑 로직(품명, 규격, 수량, 단가 등), 2) 행 단위 파싱 로직, 3) 셀 bbox와 텍스트 매칭, 4) LineItem 데이터 클래스 변환, 5) 금액 정규화(콤마 제거, 숫자 파싱), 6) TDD: 표 포함 샘플로 테스트 작성, 7) 테스트 통과를 위한 구현, 8) 품목 개수 및 필드 정확도 검증",
+			"reasoning": "표 구조 정보(셀 bbox)를 이용해 열 헤더를 식별하고, 각 행을 품목으로 파싱해야 합니다. 열 헤더가 표준이 아니거나(예: '품명' 대신 '품목명'), 병합 셀이 있을 경우를 처리해야 합니다. 금액 필드의 다양한 형식(콤마, 원, 공백)을 정규화하는 로직도 필요합니다."
+		},
+		{
+			"taskId": 17,
+			"taskTitle": "검증기 구현 (체크섬, 수식, 합계)",
+			"complexityScore": 6,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "검증기를 다음으로 세분화: 1) 사업자등록번호 체크섬 알고리즘 구현, 2) 품목별 수량×단가 검증 로직, 3) 공급가액 합계 검증, 4) 총합계금액 검증(공급가액+세액), 5) 날짜 형식 정규화 및 검증, 6) ValidationWarning 데이터 클래스 정의, 7) TDD: 정상/오류 케이스별 테스트, 8) 검증 결과 집계 로직",
+			"reasoning": "여러 검증 규칙(체크섬, 수식, 합계)을 구현하고, 각 규칙 위반 시 경고를 생성해야 합니다. 특히 부동소수점 오차를 고려한 허용 오차 설정, 날짜 형식의 다양성, 체크섬 알고리즘의 정확성이 중요합니다. TDD로 정상 케이스와 오류 케이스를 모두 커버해야 합니다."
+		},
+		{
+			"taskId": 18,
+			"taskTitle": "Repository 및 Service 레이어 구현",
+			"complexityScore": 7,
+			"recommendedSubtasks": 9,
+			"expansionPrompt": "Repository와 Service를 다음으로 세분화: 1) DocumentRepository CRUD 구현, 2) ExtractionRepository CRUD 구현, 3) ReviewEditRepository 구현, 4) DocumentService 구현(업로드, 상태 전이), 5) ExtractionService 구현(추출 결과 저장, 검증 실행), 6) 의존성 주입 설정, 7) TDD: Repository 단위 테스트(목 DB), 8) TDD: Service 단위 테스트(목 Repository), 9) 트랜잭션 관리 및 에러 핸들링",
+			"reasoning": "Controller-Service-Repository 레이어를 구현하고, 의존성 주입을 설정해야 합니다. 비즈니스 로직(상태 전이, 검증 실행)을 Service에 배치하고, Repository는 순수 CRUD만 담당하도록 분리해야 합니다. 트랜잭션 관리, 에러 핸들링, 의존성 주입 테스트 등이 필요합니다."
+		},
+		{
+			"taskId": 19,
+			"taskTitle": "Controller(라우터) 및 API 엔드포인트 구현",
+			"complexityScore": 8,
+			"recommendedSubtasks": 10,
+			"expansionPrompt": "API 엔드포인트를 다음으로 세분화: 1) documents 라우터 기본 구조, 2) POST /api/documents (업로드) 구현, 3) GET /api/documents (목록) 구현, 4) GET /api/documents/{id} 구현, 5) GET /api/documents/{id}/extraction 구현, 6) PATCH /api/documents/{id}/extraction 구현, 7) POST /api/documents/{id}/approve, reject 구현, 8) POST /api/documents/{id}/reextract 구현, 9) GET /api/documents/{id}/export 구현, 10) Pydantic 요청/응답 스키마 정의 및 통합 테스트",
+			"reasoning": "8개 이상의 엔드포인트를 구현하고, 각각에 대한 Pydantic 스키마를 정의해야 합니다. 파일 업로드, 쿼리 파라미터, 경로 파라미터, 요청 본문 등 다양한 입력을 처리하고, Service 의존성을 주입하며, 에러 핸들링과 응답 변환을 해야 합니다. TDD로 각 엔드포인트를 개별 테스트해야 합니다."
+		},
+		{
+			"taskId": 20,
+			"taskTitle": "Redis + arq 큐 및 워커 파이프라인 구현",
+			"complexityScore": 8,
+			"recommendedSubtasks": 10,
+			"expansionPrompt": "워커 파이프라인을 다음으로 세분화: 1) arq 워커 설정 및 Redis 연결, 2) process_document 태스크 정의, 3) 전처리 단계 통합, 4) OCR 단계 통합, 5) 규칙 추출 단계 통합, 6) 검증 단계 통합, 7) DB 저장 로직, 8) requestId 전파 메커니즘, 9) 에러 핸들링 및 재시도 로직, 10) 진행률 업데이트(Redis) 및 워커 테스트",
+			"reasoning": "비동기 큐를 설정하고, 전처리→OCR→추출→검증→저장 파이프라인을 하나의 태스크로 구현해야 합니다. 각 단계별 에러 핸들링, 재시도 로직, requestId 전파, 진행률 업데이트(Redis)를 구현해야 하며, 워커 테스트는 목을 활용해야 합니다. arq의 설정(재시도 횟수, 타임아웃)도 조율해야 합니다."
+		},
+		{
+			"taskId": 21,
+			"taskTitle": "SSE 진행률 스트리밍 구현",
+			"complexityScore": 5,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "SSE 스트리밍을 다음으로 세분화: 1) SSE 엔드포인트 추가(GET /api/documents/{id}/events), 2) Redis Pub/Sub 또는 폴링 구독 로직, 3) EventSourceResponse 구현, 4) 진행률 이벤트 정의(uploading, processing 등), 5) 워커에서 이벤트 발행 로직 통합, 6) SSE 클라이언트 테스트",
+			"reasoning": "SSE를 사용해 워커의 진행률을 실시간 스트리밍해야 합니다. Redis Pub/Sub 또는 폴링으로 워커 상태를 구독하고, EventSourceResponse로 클라이언트에 전송해야 합니다. 연결 관리, 타임아웃, 재연결 처리도 고려해야 합니다."
+		},
+		{
+			"taskId": 22,
+			"taskTitle": "LLM 추출기 구현 (옵트인)",
+			"complexityScore": 7,
+			"recommendedSubtasks": 9,
+			"expansionPrompt": "LLM 추출기를 다음으로 세분화: 1) Claude API 클라이언트 설정, 2) OCR 텍스트 입력 포맷 작성, 3) Pydantic 스키마 강제 출력(structured output), 4) API 호출 로직 구현, 5) 파싱 실패 시 규칙 결과로 폴백, 6) 파일 해시 기반 캐시(Redis), 7) 호출 상한(일/월), 타임아웃, 재시도, 8) API 키 없을 때 비활성화 로직, 9) TDD: 목 API로 테스트",
+			"reasoning": "Claude API를 호출하여 구조화 출력을 받고, 파싱 실패/타임아웃/API 오류 시 폴백 로직을 구현해야 합니다. 캐시, 호출 상한, 백오프 재시도 등 외부 API 호출의 여러 안전장치를 갖춰야 하며, 환경변수 기반 활성화/비활성화도 필요합니다."
+		},
+		{
+			"taskId": 23,
+			"taskTitle": "프론트엔드: 문서 목록 및 업로드 화면 구현",
+			"complexityScore": 7,
+			"recommendedSubtasks": 9,
+			"expansionPrompt": "문서 목록/업로드 화면을 다음으로 세분화: 1) 문서 목록 페이지 레이아웃, 2) 상태 필터 UI(uploaded/processing 등), 3) 검색 기능, 4) 업로드 페이지 레이아웃, 5) 드래그앤드롭 파일 입력(react-dropzone 또는 shadcn/ui), 6) SSE로 진행률 구독(EventSource API), 7) Zustand 상태 관리, 8) React Hook Form + Zod (필요 시), 9) Vitest 컴포넌트 테스트",
+			"reasoning": "목록 화면의 필터/검색, 업로드 화면의 드래그앤드롭, SSE 진행률 표시 등 여러 기능을 구현해야 합니다. Zustand로 상태를 관리하고, SSE 연결 관리와 에러 핸들링을 해야 하며, Vitest로 컴포넌트 테스트를 작성해야 합니다."
+		},
+		{
+			"taskId": 24,
+			"taskTitle": "프론트엔드: 검수 화면 구현 (bbox 오버레이, 수정 폼)",
+			"complexityScore": 9,
+			"recommendedSubtasks": 12,
+			"expansionPrompt": "검수 화면을 다음으로 세분화: 1) 검수 페이지 레이아웃, 2) Canvas/SVG bbox 오버레이 렌더링, 3) 필드 클릭 시 bbox 하이라이트, 4) 줌/팬 기능, 5) 신뢰도별 색상 표시, 6) React Hook Form + Zod 수정 폼, 7) 검증 경고 인라인 표시, 8) 품목 행 추가/삭제/수정 UI, 9) 승인/반려 버튼, 10) 재추출(rule/llm) 버튼, 11) 수정 이력 표시, 12) Vitest 폼 검증 및 Playwright E2E 테스트",
+			"reasoning": "가장 복잡한 화면으로, 이미지 위 bbox 오버레이, 필드 포커스, 줌/팬, 폼 검증, 품목 행 편집 등 다양한 UI/UX 기능이 필요합니다. Canvas/SVG 렌더링, 좌표 계산, 이벤트 핸들링이 복잡하며, React Hook Form과 Zod를 조합한 복잡한 폼 검증도 포함됩니다."
+		},
+		{
+			"taskId": 25,
+			"taskTitle": "엑셀/CSV 내보내기 기능 구현",
+			"complexityScore": 5,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "내보내기 기능을 다음으로 세분화: 1) ExportService 작성, 2) 엑셀 생성 로직(openpyxl/xlsxwriter, 헤더+품목 시트), 3) CSV 생성 로직, 4) GET /api/documents/{id}/export 엔드포인트, 5) 프론트엔드 내보내기 버튼 및 다운로드 처리, 6) pytest 및 E2E로 파일 생성 및 내용 검증",
+			"reasoning": "엑셀과 CSV 두 형식을 생성하고, 헤더/품목 데이터를 적절히 배치해야 합니다. 파일 다운로드 응답(FileResponse)과 프론트엔드 다운로드 처리를 구현하고, 생성된 파일을 파싱하여 데이터 무결성을 검증해야 합니다."
+		},
+		{
+			"taskId": 26,
+			"taskTitle": "OpenAPI 스키마 기반 프론트엔드 타입 자동 생성 및 CI 검증",
+			"complexityScore": 6,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "OpenAPI 타입 생성을 다음으로 세분화: 1) openapi-typescript 설치, 2) 타입 생성 스크립트 작성(OpenAPI JSON fetch), 3) package.json에 generate:types 스크립트 등록, 4) CI에 타입 생성 검증 단계 추가, 5) git diff로 변경 감지 로직, 6) 프론트엔드 API 클라이언트에서 생성 타입 사용, 7) README에 워크플로 문서화",
+			"reasoning": "OpenAPI 스키마를 가져와 TypeScript 타입을 생성하고, CI에서 타입이 최신인지 검증해야 합니다. 백엔드 서버를 테스트 모드로 기동하고, 타입 생성 후 변경사항을 감지하는 로직이 필요합니다. 타입 안정성 확보와 문서화도 포함됩니다."
+		},
+		{
+			"taskId": 27,
+			"taskTitle": "Playwright E2E 테스트 (업로드 → 검수 → 승인 → 내보내기 전체 흐름)",
+			"complexityScore": 8,
+			"recommendedSubtasks": 10,
+			"expansionPrompt": "E2E 테스트를 다음으로 세분화: 1) Playwright 설치 및 설정, 2) 테스트 시나리오 작성(업로드), 3) SSE 이벤트 대기 로직, 4) 문서 목록 클릭 시나리오, 5) 검수 화면 진입 및 bbox 확인, 6) 필드 수정 시나리오, 7) 승인 버튼 클릭 시나리오, 8) 내보내기 다운로드 시나리오, 9) CI 통합 및 headless 모드, 10) 스크린샷/비디오 저장",
+			"reasoning": "전체 워크플로를 E2E로 검증하며, 비동기 SSE 이벤트 대기, 파일 업로드/다운로드, 복잡한 UI 상호작용을 테스트해야 합니다. Docker Compose 테스트 환경 설정, CI 통합, 실패 시 디버깅 아티팩트 저장 등이 필요합니다."
+		},
+		{
+			"taskId": 28,
+			"taskTitle": "규칙 vs 규칙+LLM 벤치마크 비교 및 비용 측정",
+			"complexityScore": 7,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "추출 벤치마크를 다음으로 세분화: 1) extraction_benchmark.py 작성, 2) 규칙 기반 추출 실행 및 측정, 3) LLM 추출 실행 및 측정, 4) 필드 정확도 계산, 5) 검증 경고 건수 집계, 6) 처리시간 측정, 7) LLM 비용 계산(토큰×단가), 8) results.md에 비교 표 추가",
+			"reasoning": "규칙 기반과 LLM 추출을 각각 실행하고, 정확도, 경고 건수, 시간, 비용을 비교 측정해야 합니다. 토큰 사용량 계산과 단가 적용, 마크다운 테이블 생성 등이 필요하며, 측정 시점의 단가를 기록해야 합니다."
+		},
+		{
+			"taskId": 29,
+			"taskTitle": "보안 및 개인정보 보호 강화 (업로드 검증, 보관 기간, 레이트 리밋, CORS)",
+			"complexityScore": 7,
+			"recommendedSubtasks": 9,
+			"expansionPrompt": "보안 강화를 다음으로 세분화: 1) 파일 형식/크기 제한 로직, 2) 매직 바이트 검사(python-magic), 3) 보관 기간 정책 워커 작성, 4) DB 레코드 삭제 로직(soft/hard delete), 5) 레이트 리밋 미들웨어(slowapi), 6) CORS 화이트리스트 설정, 7) 로그 개인정보 마스킹, 8) 로그 점검 테스트 작성, 9) 전체 보안 기능 통합 테스트",
+			"reasoning": "파일 검증, 보관 기간 정책, 레이트 리밋, CORS, 로그 마스킹 등 여러 보안 기능을 구현해야 합니다. 특히 매직 바이트 검사, arq 주기 작업, 레이트 리밋 설정, 로그에서 민감 정보 제거 등 다양한 기술을 다룹니다."
+		},
+		{
+			"taskId": 30,
+			"taskTitle": "라이브 데모 배포 및 샘플 체험 기능 구성",
+			"complexityScore": 8,
+			"recommendedSubtasks": 10,
+			"expansionPrompt": "데모 배포를 다음으로 세분화: 1) 배포 플랫폼 선정, 2) Docker 이미지 최적화(멀티 스테이지), 3) 모델 가중치 이미지 포함, 4) 샘플 체험 페이지 작성, 5) 샘플 문서 선택 UI, 6) LLM 화이트리스트 설정, 7) 배포 구성 파일 작성, 8) 헬스체크 및 재시작 정책, 9) 배포 실행 및 검증, 10) README에 데모 URL 추가",
+			"reasoning": "CPU 기반 데모 환경을 배포하고, Docker 이미지 최적화, 샘플 체험 기능, LLM 제한, 배포 설정 등을 구현해야 합니다. 특히 콜드 스타트 최적화를 위한 모델 가중치 캐싱과 배포 플랫폼별 설정이 복잡합니다."
+		},
+		{
+			"taskId": 31,
+			"taskTitle": "README 및 아키텍처 문서 작성 (다이어그램, 실행 방법, 벤치마크, 한계)",
+			"complexityScore": 6,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "README 작성을 다음으로 세분화: 1) 프로젝트 소개 및 주요 기능 요약, 2) 데모 URL 및 GIF 추가, 3) 아키텍처 다이어그램 작성(Mermaid), 4) 빠른 시작 가이드 작성, 5) 환경변수 설명 표 작성, 6) 벤치마크 결과 요약 추가, 7) 기술 스택 및 한계 명시, 8) 기여/라이선스 섹션",
+			"reasoning": "처음 보는 사람이 5분 안에 실행할 수 있도록 명확한 문서를 작성해야 합니다. 아키텍처 다이어그램, 환경변수 설명, 벤치마크 표, 데모 GIF 등 다양한 요소를 포함하며, 한계와 알려진 이슈를 솔직하게 명시해야 합니다."
+		},
+		{
+			"taskId": 32,
+			"taskTitle": "숨고 프로필용 케이스 스터디 작성",
+			"complexityScore": 5,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "케이스 스터디를 다음으로 세분화: 1) 문제 정의 섹션 작성, 2) 접근 방식 섹션 작성, 3) 정확도 수치 정리(벤치마크 기반), 4) 처리시간 섹션 작성, 5) 운영 비용 섹션 작성, 6) 확장 가능 영역 섹션 작성, 7) 결론 및 시각 자료 추가",
+			"reasoning": "벤치마크 결과를 기반으로 문제, 접근, 수치, 비용, 확장 영역을 정리해야 합니다. 모든 수치는 측정 결과를 참조하고, 실무 적용 가능성과 확장 가능성을 구체적으로 제시해야 합니다."
+		}
+	]
+}

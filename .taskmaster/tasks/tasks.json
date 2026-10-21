@@ -1,0 +1,558 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": "1",
+        "title": "모노레포 및 개발 환경 초기 설정",
+        "description": "Python 3.12(uv) 및 npm 워크스페이스 기반 모노레포 구조 구성",
+        "details": "- apps/api, apps/web 디렉터리 생성\n- Python: uv로 Python 3.12 고정, pyproject.toml 설정 (FastAPI, SQLAlchemy 2, Alembic, Pydantic v2, arq, redis, paddleocr 등)\n- Node.js: 루트 package.json에 워크스페이스 설정, apps/web에 Next.js 15 프로젝트 생성\n- .gitignore, .env.example 파일 작성\n- ruff, mypy/pyright 설정 추가",
+        "testStrategy": "uv sync 및 npm install이 에러 없이 완료되는지 확인. Python 및 Node.js 버전 확인.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "complexity": 4,
+        "recommendedSubtasks": 6,
+        "expansionPrompt": "모노레포 설정을 다음 단계로 세분화: 1) 디렉터리 구조 생성 및 기본 파일 작성, 2) Python uv 환경 설정 및 pyproject.toml 구성, 3) npm 워크스페이스 설정 및 Next.js 프로젝트 생성, 4) 린터/포매터 설정(ruff, mypy/pyright, ESLint), 5) .gitignore 및 .env.example 작성, 6) 전체 환경 검증 및 빌드 테스트",
+        "updatedAt": "2026-10-21T13:59:49.132Z"
+      },
+      {
+        "id": "2",
+        "title": "Docker Compose 인프라 구성",
+        "description": "postgres, redis, api, worker, web 서비스를 포함한 Docker Compose 설정",
+        "details": "- docker-compose.yml 작성: postgres (15+), redis (7+), api (FastAPI), worker (arq), web (Next.js)\n- 각 서비스별 Dockerfile 작성 (api: Python 3.12 베이스, web: Node.js 베이스)\n- 환경변수 주입 설정 (.env 파일 기반)\n- 볼륨 마운트: DB 데이터, 업로드 파일, 로그\n- 네트워크 설정 및 포트 매핑 (api: 8000, web: 3000, postgres: 5432, redis: 6379)",
+        "testStrategy": "docker compose up으로 모든 서비스가 정상 기동되고 헬스체크 통과 확인",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 7,
+        "expansionPrompt": "Docker 인프라 구성을 다음으로 세분화: 1) docker-compose.yml 기본 구조 및 네트워크 설정, 2) PostgreSQL 서비스 설정(볼륨, 환경변수), 3) Redis 서비스 설정, 4) FastAPI용 Dockerfile 및 api 서비스 설정, 5) arq 워커 서비스 설정, 6) Next.js용 Dockerfile 및 web 서비스 설정, 7) 헬스체크 및 전체 스택 통합 테스트"
+      },
+      {
+        "id": "3",
+        "title": "FastAPI 기본 골격 및 미들웨어 구성",
+        "description": "requestId 미들웨어, 도메인 예외 핸들러, 구조화 로깅, /health 엔드포인트 구현",
+        "details": "- apps/api/app/main.py에 FastAPI 앱 생성\n- requestId 미들웨어: UUID 생성 후 request.state 및 응답 헤더에 주입\n- 도메인 예외 클래스 정의 (app/exceptions.py): ValidationError, NotFoundError 등\n- 전역 예외 핸들러: 도메인 예외를 HTTP 응답으로 변환, requestId 포함\n- 구조화 로깅 설정 (structlog 또는 python-json-logger)\n- GET /health 엔드포인트 (DB, Redis 연결 체크)\n- CORS, 레이트 리밋 미들웨어 설정",
+        "testStrategy": "pytest로 /health 엔드포인트 테스트, 예외 발생 시 requestId가 응답에 포함되는지 검증",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 6,
+        "recommendedSubtasks": 8,
+        "expansionPrompt": "FastAPI 골격을 다음으로 세분화: 1) FastAPI 앱 초기화 및 기본 설정, 2) requestId 미들웨어 구현 및 테스트, 3) 도메인 예외 클래스 정의(exceptions.py), 4) 전역 예외 핸들러 구현 및 테스트, 5) 구조화 로깅 설정(structlog), 6) /health 엔드포인트 구현(DB/Redis 연결 체크), 7) CORS 미들웨어 설정, 8) 레이트 리밋 미들웨어 설정 및 전체 통합 테스트"
+      },
+      {
+        "id": "4",
+        "title": "Next.js 프론트엔드 기본 구조 및 UI 라이브러리 설정",
+        "description": "App Router, shadcn/ui, Tailwind CSS, Zustand, API 클라이언트 설정",
+        "details": "- Next.js 15 프로젝트 생성 (App Router)\n- Tailwind CSS, shadcn/ui 설치 및 설정 (components.json)\n- 기본 레이아웃 (app/layout.tsx), 홈 페이지 (app/page.tsx)\n- Zustand 스토어 기본 구조 (stores/)\n- API 클라이언트 유틸리티 작성 (lib/api-client.ts, requestId 전파)\n- TypeScript strict 모드 설정",
+        "testStrategy": "npm run dev로 개발 서버 기동, 기본 페이지 렌더링 확인. npx tsc --noEmit 통과",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 7,
+        "expansionPrompt": "Next.js 프론트 설정을 다음으로 세분화: 1) Next.js 15 프로젝트 생성 및 App Router 구조 설정, 2) Tailwind CSS 설치 및 설정, 3) shadcn/ui 설치 및 components.json 구성, 4) 기본 레이아웃 및 홈 페이지 작성, 5) Zustand 스토어 기본 구조 작성, 6) API 클라이언트 유틸리티 작성(requestId 전파), 7) TypeScript strict 모드 설정 및 빌드 검증"
+      },
+      {
+        "id": "5",
+        "title": "GitHub Actions CI 파이프라인 구성",
+        "description": "백엔드 테스트/린트/타입 체크, 프론트엔드 test/tsc/lint 자동화",
+        "details": "- .github/workflows/ci.yml 작성\n- 백엔드 잡: uv sync, pytest, ruff check, mypy/pyright\n- 프론트엔드 잡: npm ci, npm run test, npx tsc --noEmit, npm run lint\n- Docker 이미지 빌드 테스트\n- 병렬 실행 설정",
+        "testStrategy": "PR 생성 시 CI가 자동 실행되고 모든 체크가 통과하는지 확인",
+        "priority": "medium",
+        "dependencies": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 6,
+        "expansionPrompt": "CI 파이프라인을 다음으로 세분화: 1) 워크플로우 파일 구조 및 트리거 설정, 2) 백엔드 잡 구성(uv sync, pytest, 코드 커버리지), 3) 백엔드 린트/타입 체크 잡(ruff, mypy/pyright), 4) 프론트엔드 잡 구성(npm ci, test, tsc, lint), 5) Docker 이미지 빌드 테스트 잡, 6) 캐싱 최적화 및 병렬 실행 설정"
+      },
+      {
+        "id": "6",
+        "title": "합성 거래명세서 골든셋 생성기 작성",
+        "description": "5종 이상 템플릿으로 30장 이상 합성 데이터 생성 및 정답 라벨 자동 생성",
+        "details": "- samples/generator.py 작성\n- 템플릿 5종 이상 디자인 (HTML/CSS 또는 reportlab 사용)\n- 가짜 데이터 생성 (faker-kr 또는 수동 데이터셋)\n- 렌더링: 깨끗한 스캔, 기울어짐(회전), 저해상도, 스마트폰 촬영 시뮬레이션 (원근 변환, 그림자, 노이즈)\n- 정답 라벨 JSON 자동 생성 (헤더 필드, 품목 배열)\n- samples/golden/*.png, samples/golden/*.json 출력",
+        "testStrategy": "생성기 실행 후 30장 이상 이미지와 대응 JSON 파일 확인. 샘플 이미지 육안 검증",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 7,
+        "recommendedSubtasks": 9,
+        "expansionPrompt": "골든셋 생성기를 다음으로 세분화: 1) 템플릿 디자인(HTML/CSS 또는 reportlab, 5종 이상), 2) 가짜 데이터 생성 로직(faker-kr 또는 수동 데이터셋), 3) 깨끗한 스캔 렌더링, 4) 기울어짐 변형(회전 변환), 5) 저해상도 변형, 6) 스마트폰 촬영 시뮬레이션(원근 변환, 그림자, 노이즈), 7) 정답 라벨 JSON 자동 생성 로직, 8) 30장 이상 배치 생성 스크립트, 9) 생성 결과 검증(이미지/JSON 쌍 확인)"
+      },
+      {
+        "id": "7",
+        "title": "DB 스키마 및 마이그레이션 설정",
+        "description": "SQLAlchemy 2 모델 정의 및 Alembic 마이그레이션 초기화",
+        "details": "- apps/api/app/models/ 디렉터리 생성\n- Document, OcrResult, Extraction, LineItem, ReviewEdit 모델 정의 (SQLAlchemy 2.x 스타일)\n- Alembic 초기화 (alembic init alembic)\n- 첫 마이그레이션 생성 (alembic revision --autogenerate -m \"initial schema\")\n- 인덱스 설정: document_id, status, created_at 등",
+        "testStrategy": "alembic upgrade head 실행 후 DB에 테이블 생성 확인. pytest로 모델 CRUD 테스트",
+        "priority": "high",
+        "dependencies": [
+          "2",
+          "3"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 7,
+        "expansionPrompt": "DB 스키마를 다음으로 세분화: 1) SQLAlchemy 기본 설정 및 Base 클래스 정의, 2) Document 모델 정의 및 인덱스 설정, 3) OcrResult 모델 정의, 4) Extraction 및 LineItem 모델 정의(관계 설정), 5) ReviewEdit 모델 정의, 6) Alembic 초기화 및 첫 마이그레이션 생성, 7) 마이그레이션 적용 및 모델 CRUD 테스트"
+      },
+      {
+        "id": "8",
+        "title": "OcrEngine Protocol 및 인터페이스 정의",
+        "description": "OCR 엔진 추상화 인터페이스와 데이터 구조 정의",
+        "details": "- apps/api/app/ocr/engine.py 작성\n- OcrEngine Protocol 정의: recognize(image: np.ndarray) -> OcrPage, name 속성, supports_gpu 속성\n- OcrPage, OcrToken 데이터 클래스 정의 (text, bbox, confidence)\n- 엔진 등록 및 선택 메커니즘 (환경변수 기반)",
+        "testStrategy": "Protocol 구조 정의 후 타입 체크 통과. 더미 엔진 구현으로 인터페이스 검증",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 3,
+        "recommendedSubtasks": 5,
+        "expansionPrompt": "OcrEngine Protocol을 다음으로 세분화: 1) OcrPage, OcrToken 데이터 클래스 정의, 2) OcrEngine Protocol 정의(recognize, name, supports_gpu), 3) 엔진 등록 메커니즘 구현(레지스트리 패턴), 4) 환경변수 기반 엔진 선택 로직, 5) 더미 엔진 구현 및 인터페이스 검증 테스트"
+      },
+      {
+        "id": "9",
+        "title": "PaddleOCR v5 한국어 어댑터 구현",
+        "description": "PP-OCRv5 한국어 모델을 OcrEngine Protocol로 래핑",
+        "details": "- apps/api/app/ocr/engines/paddleocr_adapter.py 작성\n- PaddleOCR 초기화: 한국어 모델, GPU 설정 (환경변수 기반)\n- recognize 메서드 구현: PaddleOCR 출력을 OcrPage로 변환\n- 처리시간 측정 및 로깅\n- TDD: 실패하는 테스트 먼저 작성 (샘플 이미지 인식 결과 검증)",
+        "testStrategy": "pytest로 골든셋 이미지 1장 인식, 토큰 개수 및 신뢰도 범위 검증",
+        "priority": "high",
+        "dependencies": [
+          "8",
+          "6"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 6,
+        "recommendedSubtasks": 7,
+        "expansionPrompt": "PaddleOCR 어댑터를 다음으로 세분화: 1) PaddleOCR 초기화 로직 작성(한국어 모델, GPU 설정), 2) recognize 메서드 구현(이미지 입력 처리), 3) PaddleOCR 출력을 OcrPage로 변환하는 로직, 4) 처리시간 측정 및 로깅, 5) TDD: 실패하는 테스트 작성(샘플 이미지 인식), 6) 테스트 통과를 위한 구현, 7) 토큰 개수 및 신뢰도 범위 검증 테스트"
+      },
+      {
+        "id": "10",
+        "title": "이미지 전처리 파이프라인 구현",
+        "description": "기울기 보정, 대비 개선, 리사이즈 전처리 기능",
+        "details": "- apps/api/app/ocr/preprocessing.py 작성\n- OpenCV 사용: deskew (Hough 변환), 대비 개선 (CLAHE), 적응형 임계화\n- 리사이즈: 긴 변 기준 최대 픽셀 제한\n- PDF 페이지 분리: pypdfium2 또는 PyMuPDF (라이선스 검토 후 선택)\n- TDD: 기울어진 이미지 입력 → 보정된 이미지 출력 검증",
+        "testStrategy": "pytest로 전처리 함수 단위 테스트. 기울기 각도 측정 및 보정 정확도 검증",
+        "priority": "medium",
+        "dependencies": [
+          "1"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 6,
+        "recommendedSubtasks": 8,
+        "expansionPrompt": "전처리 파이프라인을 다음으로 세분화: 1) OpenCV 기반 기울기 보정(Hough 변환), 2) 대비 개선(CLAHE), 3) 적응형 임계화, 4) 리사이즈 로직(긴 변 기준), 5) PDF 페이지 분리(pypdfium2/PyMuPDF 선택 및 구현), 6) 전처리 파이프라인 조합 함수, 7) TDD: 기울어진 이미지 보정 검증, 8) 전처리 전후 이미지 비교 테스트"
+      },
+      {
+        "id": "11",
+        "title": "PaddlePaddle 표 구조 인식 통합",
+        "description": "PP-StructureV3 표 인식으로 품목 표 셀 추출",
+        "details": "- apps/api/app/ocr/table_recognizer.py 작성\n- PP-Structure 초기화 및 표 영역 감지\n- 셀 단위 bbox 및 텍스트 추출\n- OcrPage에 표 구조 정보 추가 (테이블별 행/열 그리드)\n- TDD: 표가 포함된 샘플 문서로 셀 추출 테스트",
+        "testStrategy": "pytest로 품목 표 셀 개수, 위치 정확도 검증 (정답 라벨 대비)",
+        "priority": "high",
+        "dependencies": [
+          "9"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 7,
+        "recommendedSubtasks": 8,
+        "expansionPrompt": "표 구조 인식을 다음으로 세분화: 1) PP-Structure 초기화 및 환경 설정, 2) 표 영역 감지 로직 구현, 3) 셀 단위 bbox 추출, 4) 셀 내 텍스트 추출 및 OCR 연동, 5) OcrPage에 표 구조 정보 추가(행/열 그리드), 6) TDD: 표 포함 샘플 문서로 테스트 작성, 7) 테스트 통과를 위한 구현, 8) 정답 라벨 대비 셀 개수/위치 정확도 검증"
+      },
+      {
+        "id": "12",
+        "title": "Tesseract 베이스라인 어댑터 구현",
+        "description": "Tesseract OCR을 OcrEngine Protocol로 래핑하여 비교 기준선 제공",
+        "details": "- apps/api/app/ocr/engines/tesseract_adapter.py 작성\n- pytesseract 사용, 한국어 언어팩 설정\n- recognize 메서드 구현\n- 처리시간 측정",
+        "testStrategy": "pytest로 샘플 이미지 인식, PaddleOCR와 결과 비교",
+        "priority": "low",
+        "dependencies": [
+          "8"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 3,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Tesseract 어댑터를 다음으로 세분화: 1) pytesseract 설치 및 한국어 언어팩 설정, 2) recognize 메서드 구현, 3) Tesseract 출력을 OcrPage로 변환, 4) 처리시간 측정 및 PaddleOCR와 비교 테스트"
+      },
+      {
+        "id": "13",
+        "title": "PaddleOCR-VL GPU 어댑터 구현 (선택)",
+        "description": "GPU 환경에서만 활성화되는 PaddleOCR-VL 어댑터",
+        "details": "- apps/api/app/ocr/engines/paddleocr_vl_adapter.py 작성\n- GPU 감지 로직 (torch.cuda.is_available)\n- 엔진 등록 시 GPU 없으면 스킵\n- supports_gpu = True 설정",
+        "testStrategy": "GPU 환경에서 pytest 실행, CPU 환경에서는 엔진 미등록 확인",
+        "priority": "low",
+        "dependencies": [
+          "8"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 4,
+        "recommendedSubtasks": 5,
+        "expansionPrompt": "PaddleOCR-VL 어댑터를 다음으로 세분화: 1) GPU 감지 로직 구현(torch.cuda.is_available), 2) PaddleOCR-VL 초기화 및 GPU 설정, 3) recognize 메서드 구현, 4) supports_gpu = True 설정 및 엔진 등록, 5) GPU/CPU 환경별 테스트"
+      },
+      {
+        "id": "14",
+        "title": "OCR 벤치마크 스크립트 작성",
+        "description": "CER, 필드 정확도, 표 셀 정확도, 처리시간을 골든셋으로 측정하여 마크다운 표 출력",
+        "details": "- benchmarks/ocr_benchmark.py 작성\n- 골든셋 30장 전체에 대해 각 엔진별 실행\n- CER 계산 (editdistance 라이브러리)\n- 필드 정확도: 정답 라벨과 추출된 텍스트 비교\n- 표 셀 정확도: IoU 기반 셀 매칭\n- 처리시간 측정 (평균, 중앙값, P95)\n- 결과를 마크다운 표로 출력 (benchmarks/results.md)",
+        "testStrategy": "벤치마크 실행 후 results.md 생성 확인. CPU에서 1페이지 처리시간 기록",
+        "priority": "medium",
+        "dependencies": [
+          "9",
+          "10",
+          "11",
+          "12",
+          "6"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 7,
+        "recommendedSubtasks": 9,
+        "expansionPrompt": "OCR 벤치마크를 다음으로 세분화: 1) 골든셋 로딩 및 정답 라벨 파싱, 2) 각 엔진별 실행 루프, 3) CER 계산 로직(editdistance), 4) 필드 정확도 계산(정답 라벨 비교), 5) 표 셀 정확도 계산(IoU 기반 매칭), 6) 처리시간 측정(평균, 중앙값, P95), 7) 마크다운 표 생성 로직, 8) 벤치마크 실행 스크립트, 9) results.md 파일 생성 및 검증"
+      },
+      {
+        "id": "15",
+        "title": "규칙 기반 헤더 필드 추출기 구현",
+        "description": "키워드 기반으로 거래명세서 헤더 필드 추출",
+        "details": "- apps/api/app/extraction/rule_extractor.py 작성\n- 키워드 매칭: '발행일', '문서번호', '공급자', '공급받는자', '사업자등록번호' 등\n- 정규식 패턴: 날짜(YYYY-MM-DD 등), 사업자등록번호(###-##-#####)\n- 신뢰도 계산: 키워드 거리, OCR 신뢰도 평균\n- Pydantic 스키마로 출력 (HeaderFields)\n- TDD: 샘플 문서로 필드 추출 테스트",
+        "testStrategy": "pytest로 골든셋 정답 라벨과 추출 결과 비교, 필드별 정확도 검증",
+        "priority": "high",
+        "dependencies": [
+          "9",
+          "11",
+          "6"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 6,
+        "recommendedSubtasks": 8,
+        "expansionPrompt": "헤더 필드 추출기를 다음으로 세분화: 1) 키워드 매칭 로직 구현(발행일, 문서번호 등), 2) 정규식 패턴 정의(날짜, 사업자등록번호), 3) 신뢰도 계산 로직(키워드 거리, OCR 신뢰도), 4) Pydantic 스키마 정의(HeaderFields), 5) 추출 함수 구현, 6) TDD: 샘플 문서로 테스트 작성, 7) 테스트 통과를 위한 구현, 8) 정답 라벨 대비 필드별 정확도 검증"
+      },
+      {
+        "id": "16",
+        "title": "규칙 기반 품목 표 파서 구현",
+        "description": "표 구조 정보를 이용해 품목 행 파싱",
+        "details": "- apps/api/app/extraction/table_parser.py 작성\n- 열 헤더 매핑: '품명', '규격', '수량', '단가', '공급가액', '세액'\n- 행 단위 파싱: 셀 bbox와 텍스트를 LineItem으로 변환\n- 금액 정규화: 콤마 제거, 숫자 파싱\n- TDD: 표가 포함된 샘플로 품목 개수 및 필드 정확도 검증",
+        "testStrategy": "pytest로 품목 개수, 각 품목의 품명/수량/단가 정확도 검증",
+        "priority": "high",
+        "dependencies": [
+          "11",
+          "15"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 7,
+        "recommendedSubtasks": 8,
+        "expansionPrompt": "품목 표 파서를 다음으로 세분화: 1) 열 헤더 매핑 로직(품명, 규격, 수량, 단가 등), 2) 행 단위 파싱 로직, 3) 셀 bbox와 텍스트 매칭, 4) LineItem 데이터 클래스 변환, 5) 금액 정규화(콤마 제거, 숫자 파싱), 6) TDD: 표 포함 샘플로 테스트 작성, 7) 테스트 통과를 위한 구현, 8) 품목 개수 및 필드 정확도 검증"
+      },
+      {
+        "id": "17",
+        "title": "검증기 구현 (체크섬, 수식, 합계)",
+        "description": "사업자등록번호 체크섬, 수량×단가, 합계 대조 검증",
+        "details": "- apps/api/app/validation/validator.py 작성\n- 사업자등록번호 체크섬 (가중치 1,3,7,1,3,7,1,3,5)\n- 품목별: 수량 × 단가 = 공급가액 (허용 오차 설정)\n- 합계: 품목 공급가액 합계 = 헤더 공급가액 합계\n- 총합: 공급가액 + 세액 = 총 합계금액\n- 날짜 형식 정규화 및 검증\n- 검증 결과는 필드별 경고 리스트로 반환 (ValidationWarning)\n- TDD: 정상/오류 케이스별 테스트",
+        "testStrategy": "pytest로 체크섬 알고리즘 검증, 수식 불일치 감지 테스트",
+        "priority": "high",
+        "dependencies": [
+          "15",
+          "16"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 6,
+        "recommendedSubtasks": 8,
+        "expansionPrompt": "검증기를 다음으로 세분화: 1) 사업자등록번호 체크섬 알고리즘 구현, 2) 품목별 수량×단가 검증 로직, 3) 공급가액 합계 검증, 4) 총합계금액 검증(공급가액+세액), 5) 날짜 형식 정규화 및 검증, 6) ValidationWarning 데이터 클래스 정의, 7) TDD: 정상/오류 케이스별 테스트, 8) 검증 결과 집계 로직"
+      },
+      {
+        "id": "18",
+        "title": "Repository 및 Service 레이어 구현",
+        "description": "Document, Extraction CRUD 로직을 Repository와 Service로 분리",
+        "details": "- apps/api/app/repositories/ 디렉터리 생성\n- DocumentRepository, ExtractionRepository 작성 (SQLAlchemy 세션 의존성 주입)\n- apps/api/app/services/ 디렉터리 생성\n- DocumentService, ExtractionService 작성 (Repository 의존성 주입)\n- 비즈니스 로직: 문서 업로드, 추출 결과 저장, 검증 실행, 상태 전이\n- TDD: 서비스 메서드별 단위 테스트",
+        "testStrategy": "pytest로 Repository CRUD 테스트, Service 로직 테스트 (목 사용)",
+        "priority": "high",
+        "dependencies": [
+          "7",
+          "17"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 7,
+        "recommendedSubtasks": 9,
+        "expansionPrompt": "Repository와 Service를 다음으로 세분화: 1) DocumentRepository CRUD 구현, 2) ExtractionRepository CRUD 구현, 3) ReviewEditRepository 구현, 4) DocumentService 구현(업로드, 상태 전이), 5) ExtractionService 구현(추출 결과 저장, 검증 실행), 6) 의존성 주입 설정, 7) TDD: Repository 단위 테스트(목 DB), 8) TDD: Service 단위 테스트(목 Repository), 9) 트랜잭션 관리 및 에러 핸들링"
+      },
+      {
+        "id": "19",
+        "title": "Controller(라우터) 및 API 엔드포인트 구현",
+        "description": "FastAPI 라우터로 HTTP 입출력만 처리",
+        "details": "- apps/api/app/controllers/ 디렉터리 생성\n- documents.py 라우터 작성\n- POST /api/documents (업로드), GET /api/documents, GET /api/documents/{id}\n- GET /api/documents/{id}/extraction, PATCH /api/documents/{id}/extraction\n- POST /api/documents/{id}/approve, POST /api/documents/{id}/reject\n- POST /api/documents/{id}/reextract?mode=rule|llm\n- GET /api/documents/{id}/export?format=xlsx|csv\n- Service 의존성 주입 (Depends)\n- Pydantic 요청/응답 스키마 정의\n- TDD: pytest로 각 엔드포인트 테스트",
+        "testStrategy": "pytest로 API 엔드포인트 통합 테스트, 상태 코드 및 응답 스키마 검증",
+        "priority": "high",
+        "dependencies": [
+          "18"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 8,
+        "recommendedSubtasks": 10,
+        "expansionPrompt": "API 엔드포인트를 다음으로 세분화: 1) documents 라우터 기본 구조, 2) POST /api/documents (업로드) 구현, 3) GET /api/documents (목록) 구현, 4) GET /api/documents/{id} 구현, 5) GET /api/documents/{id}/extraction 구현, 6) PATCH /api/documents/{id}/extraction 구현, 7) POST /api/documents/{id}/approve, reject 구현, 8) POST /api/documents/{id}/reextract 구현, 9) GET /api/documents/{id}/export 구현, 10) Pydantic 요청/응답 스키마 정의 및 통합 테스트"
+      },
+      {
+        "id": "20",
+        "title": "Redis + arq 큐 및 워커 파이프라인 구현",
+        "description": "비동기 OCR 작업 큐 및 워커 (전처리 → OCR → 추출 → 검증)",
+        "details": "- apps/api/app/workers/ 디렉터리 생성\n- arq 워커 설정 (worker.py)\n- process_document 태스크: 전처리 → OCR → 규칙 추출 → 검증 → DB 저장\n- requestId 전파\n- 에러 핸들링 및 재시도 로직\n- 진행률 업데이트 (Redis에 상태 저장)\n- TDD: 워커 태스크 단위 테스트 (목 사용)",
+        "testStrategy": "pytest로 워커 태스크 실행, DB에 결과 저장 확인. 에러 발생 시 재시도 검증",
+        "priority": "high",
+        "dependencies": [
+          "10",
+          "15",
+          "16",
+          "17",
+          "18"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 8,
+        "recommendedSubtasks": 10,
+        "expansionPrompt": "워커 파이프라인을 다음으로 세분화: 1) arq 워커 설정 및 Redis 연결, 2) process_document 태스크 정의, 3) 전처리 단계 통합, 4) OCR 단계 통합, 5) 규칙 추출 단계 통합, 6) 검증 단계 통합, 7) DB 저장 로직, 8) requestId 전파 메커니즘, 9) 에러 핸들링 및 재시도 로직, 10) 진행률 업데이트(Redis) 및 워커 테스트"
+      },
+      {
+        "id": "21",
+        "title": "SSE 진행률 스트리밍 구현",
+        "description": "GET /api/documents/{id}/events로 실시간 처리 진행률 전송",
+        "details": "- apps/api/app/controllers/documents.py에 SSE 엔드포인트 추가\n- Redis Pub/Sub 또는 폴링으로 워커 진행률 구독\n- EventSourceResponse 사용\n- 진행률 이벤트: uploading, processing, extracting, validating, completed, failed\n- TDD: SSE 클라이언트로 이벤트 수신 테스트",
+        "testStrategy": "pytest 또는 수동 테스트로 SSE 스트림 확인, 이벤트 순서 검증",
+        "priority": "medium",
+        "dependencies": [
+          "20"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 6,
+        "expansionPrompt": "SSE 스트리밍을 다음으로 세분화: 1) SSE 엔드포인트 추가(GET /api/documents/{id}/events), 2) Redis Pub/Sub 또는 폴링 구독 로직, 3) EventSourceResponse 구현, 4) 진행률 이벤트 정의(uploading, processing 등), 5) 워커에서 이벤트 발행 로직 통합, 6) SSE 클라이언트 테스트"
+      },
+      {
+        "id": "22",
+        "title": "LLM 추출기 구현 (옵트인)",
+        "description": "Claude API로 OCR 텍스트 기반 필드 추출, 폴백 및 캐시",
+        "details": "- apps/api/app/extraction/llm_extractor.py 작성\n- Anthropic Claude API 호출 (Haiku 급 모델)\n- 입력: OCR 텍스트 + 좌표 요약 (이미지 미전송)\n- 출력: Pydantic 스키마 강제 (structured output)\n- 파싱 실패 시 규칙 추출 결과로 폴백\n- 파일 해시 기반 결과 캐시 (Redis)\n- 호출 상한 (일/월), 타임아웃, 재시도 (백오프)\n- API 키 없으면 자동 비활성화\n- TDD: 목 API로 LLM 호출 테스트, 캐시 히트 검증",
+        "testStrategy": "pytest로 LLM 호출 로직 테스트, 캐시 동작 확인. 통합 테스트는 실제 API 또는 목 사용",
+        "priority": "medium",
+        "dependencies": [
+          "15",
+          "16"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 7,
+        "recommendedSubtasks": 9,
+        "expansionPrompt": "LLM 추출기를 다음으로 세분화: 1) Claude API 클라이언트 설정, 2) OCR 텍스트 입력 포맷 작성, 3) Pydantic 스키마 강제 출력(structured output), 4) API 호출 로직 구현, 5) 파싱 실패 시 규칙 결과로 폴백, 6) 파일 해시 기반 캐시(Redis), 7) 호출 상한(일/월), 타임아웃, 재시도, 8) API 키 없을 때 비활성화 로직, 9) TDD: 목 API로 테스트"
+      },
+      {
+        "id": "23",
+        "title": "프론트엔드: 문서 목록 및 업로드 화면 구현",
+        "description": "드래그앤드롭 업로드, 진행률 SSE, 문서 목록 (상태 필터, 검색)",
+        "details": "- app/documents/page.tsx: 문서 목록 화면\n- 상태 필터 (uploaded/processing/extracted/reviewed/failed), 검색\n- app/documents/upload/page.tsx: 업로드 화면\n- react-dropzone 또는 shadcn/ui 파일 입력 컴포넌트\n- SSE로 진행률 구독 (EventSource API)\n- Zustand로 상태 관리\n- React Hook Form + Zod (필요 시)\n- TDD: Vitest로 컴포넌트 테스트",
+        "testStrategy": "Vitest로 업로드 폼 제출 테스트. Playwright E2E로 업로드 → 목록 표시 검증",
+        "priority": "high",
+        "dependencies": [
+          "4",
+          "19",
+          "21",
+          "26"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 7,
+        "recommendedSubtasks": 9,
+        "expansionPrompt": "문서 목록/업로드 화면을 다음으로 세분화: 1) 문서 목록 페이지 레이아웃, 2) 상태 필터 UI(uploaded/processing 등), 3) 검색 기능, 4) 업로드 페이지 레이아웃, 5) 드래그앤드롭 파일 입력(react-dropzone 또는 shadcn/ui), 6) SSE로 진행률 구독(EventSource API), 7) Zustand 상태 관리, 8) React Hook Form + Zod (필요 시), 9) Vitest 컴포넌트 테스트"
+      },
+      {
+        "id": "24",
+        "title": "프론트엔드: 검수 화면 구현 (bbox 오버레이, 수정 폼)",
+        "description": "원본 이미지 위 bbox 오버레이, 필드 클릭 포커스, 신뢰도 색상, 수정 폼",
+        "details": "- app/documents/[id]/review/page.tsx: 검수 화면\n- Canvas 또는 SVG로 bbox 오버레이 렌더링\n- 필드 클릭 시 해당 bbox 하이라이트 및 줌\n- 신뢰도에 따른 색상 표시 (빨강/노랑/초록)\n- 수정 폼: React Hook Form + Zod, 검증 경고 인라인 표시\n- 품목 행 추가/삭제/수정 UI\n- 승인/반려, 재추출(rule/llm) 버튼\n- 수정 이력 표시\n- TDD: Vitest로 폼 검증 테스트",
+        "testStrategy": "Vitest로 bbox 렌더링 테스트, 폼 제출 로직 검증. Playwright E2E로 검수 워크플로 테스트",
+        "priority": "high",
+        "dependencies": [
+          "23"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 9,
+        "recommendedSubtasks": 12,
+        "expansionPrompt": "검수 화면을 다음으로 세분화: 1) 검수 페이지 레이아웃, 2) Canvas/SVG bbox 오버레이 렌더링, 3) 필드 클릭 시 bbox 하이라이트, 4) 줌/팬 기능, 5) 신뢰도별 색상 표시, 6) React Hook Form + Zod 수정 폼, 7) 검증 경고 인라인 표시, 8) 품목 행 추가/삭제/수정 UI, 9) 승인/반려 버튼, 10) 재추출(rule/llm) 버튼, 11) 수정 이력 표시, 12) Vitest 폼 검증 및 Playwright E2E 테스트"
+      },
+      {
+        "id": "25",
+        "title": "엑셀/CSV 내보내기 기능 구현",
+        "description": "검수 완료 문서를 xlsx/csv 형식으로 내보내기",
+        "details": "- apps/api/app/services/export_service.py 작성\n- openpyxl 또는 xlsxwriter로 엑셀 생성 (헤더 시트 + 품목 시트)\n- CSV 생성 (pandas 또는 csv 모듈)\n- GET /api/documents/{id}/export?format=xlsx|csv 엔드포인트\n- 파일 다운로드 응답 (FileResponse)\n- 프론트: 내보내기 버튼 및 다운로드 처리\n- TDD: pytest로 내보내기 파일 생성 및 내용 검증",
+        "testStrategy": "pytest로 엑셀/CSV 파일 생성 후 파싱하여 데이터 무결성 검증. E2E로 다운로드 확인",
+        "priority": "medium",
+        "dependencies": [
+          "19",
+          "24"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 6,
+        "expansionPrompt": "내보내기 기능을 다음으로 세분화: 1) ExportService 작성, 2) 엑셀 생성 로직(openpyxl/xlsxwriter, 헤더+품목 시트), 3) CSV 생성 로직, 4) GET /api/documents/{id}/export 엔드포인트, 5) 프론트엔드 내보내기 버튼 및 다운로드 처리, 6) pytest 및 E2E로 파일 생성 및 내용 검증"
+      },
+      {
+        "id": "26",
+        "title": "OpenAPI 스키마 기반 프론트엔드 타입 자동 생성 및 CI 검증",
+        "description": "FastAPI의 OpenAPI 스키마에서 openapi-typescript로 프론트엔드 TypeScript 타입을 자동 생성하고, 스키마 변경 시 타입이 최신 상태인지 CI에서 검증",
+        "details": "- openapi-typescript 패키지 설치 (npm install -D openapi-typescript)\n- 타입 생성 스크립트 작성 (scripts/generate-api-types.ts):\n  - FastAPI 서버의 /openapi.json 엔드포인트에서 스키마 fetch\n  - openapi-typescript로 apps/web/types/api.d.ts 생성\n  - package.json에 \"generate:types\" 스크립트 등록\n- CI 검증 단계 추가 (.github/workflows/ci.yml):\n  - 백엔드 서버를 테스트 모드로 기동\n  - npm run generate:types 실행\n  - git diff로 변경사항 확인, 변경이 있으면 CI 실패 (\"OpenAPI schema changed but types not regenerated\" 메시지)\n- 프론트엔드 API 클라이언트에서 생성된 타입 import 및 사용 (lib/api-client.ts)\n- 타입 안정성: Pydantic 스키마 변경 → OpenAPI 스키마 변경 → 프론트 타입 재생성 필요 → CI 실패로 감지\n- README에 타입 생성 워크플로 문서화 (\"API 스키마 변경 시 npm run generate:types 실행\")",
+        "testStrategy": "로컬에서 스키마 변경 후 generate:types 실행하여 타입 파일 갱신 확인. CI에서 타입이 outdated일 때 실패하는지 검증. 프론트 컴포넌트에서 생성된 타입 사용 시 npx tsc --noEmit 통과 확인.",
+        "priority": "high",
+        "dependencies": [
+          "4",
+          "19"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 6,
+        "recommendedSubtasks": 7,
+        "expansionPrompt": "OpenAPI 타입 생성을 다음으로 세분화: 1) openapi-typescript 설치, 2) 타입 생성 스크립트 작성(OpenAPI JSON fetch), 3) package.json에 generate:types 스크립트 등록, 4) CI에 타입 생성 검증 단계 추가, 5) git diff로 변경 감지 로직, 6) 프론트엔드 API 클라이언트에서 생성 타입 사용, 7) README에 워크플로 문서화"
+      },
+      {
+        "id": "27",
+        "title": "Playwright E2E 테스트 (업로드 → 검수 → 승인 → 내보내기 전체 흐름)",
+        "description": "합성 샘플 문서를 사용하여 업로드부터 검수 화면에서 필드 수정, 승인, 엑셀 내보내기까지 전체 워크플로를 E2E로 검증",
+        "details": "- Playwright 설치 및 설정 (apps/web/playwright.config.ts)\n- E2E 테스트 시나리오 작성 (apps/web/e2e/document-workflow.spec.ts):\n  1. 합성 샘플 이미지 업로드 (samples/golden/sample-001.png)\n  2. SSE 이벤트로 처리 완료 대기 (status: completed)\n  3. 문서 목록에서 해당 문서 클릭\n  4. 검수 화면 진입, bbox 오버레이 렌더링 확인\n  5. 필드 수정 (예: 공급가액 변경), 폼 제출\n  6. 승인 버튼 클릭\n  7. 내보내기 버튼 클릭, 엑셀 파일 다운로드 확인\n- CI 통합: GitHub Actions에 Playwright 실행 단계 추가 (headless 모드)\n- Docker Compose에 E2E 전용 서비스 설정 (테스트 DB 격리)\n- 합성 데이터만 사용하여 실제 API 키 없이 실행 가능한 구성\n- 테스트 결과 스크린샷/비디오 저장 (실패 시 디버깅용)",
+        "testStrategy": "npm run test:e2e 실행하여 전체 워크플로 통과 확인. CI에서 자동 실행 및 실패 시 아티팩트(스크린샷) 업로드. 업로드 → 승인 → 내보내기 전 과정이 5분 이내 완료.",
+        "priority": "high",
+        "dependencies": [
+          "24",
+          "25"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 8,
+        "recommendedSubtasks": 10,
+        "expansionPrompt": "E2E 테스트를 다음으로 세분화: 1) Playwright 설치 및 설정, 2) 테스트 시나리오 작성(업로드), 3) SSE 이벤트 대기 로직, 4) 문서 목록 클릭 시나리오, 5) 검수 화면 진입 및 bbox 확인, 6) 필드 수정 시나리오, 7) 승인 버튼 클릭 시나리오, 8) 내보내기 다운로드 시나리오, 9) CI 통합 및 headless 모드, 10) 스크린샷/비디오 저장"
+      },
+      {
+        "id": "28",
+        "title": "규칙 vs 규칙+LLM 벤치마크 비교 및 비용 측정",
+        "description": "기존 OCR 벤치마크를 확장하여 추출 방식(규칙 기반 vs 규칙+LLM)별로 필드 정확도, 검증 경고 건수, 처리시간, LLM 호출 비용을 비교 측정",
+        "details": "- benchmarks/extraction_benchmark.py 작성:\n  - 골든셋 30장에 대해 규칙 기반 추출과 LLM 추출 각각 실행\n  - 측정 항목:\n    1. 필드 정확도: 헤더 필드(발행일, 공급자 등) 및 품목 필드(품명, 수량, 단가 등)의 정답 일치율\n    2. 검증 경고 건수: 체크섬 오류, 수식 불일치 등 경고 발생 횟수\n    3. 처리시간: OCR 제외한 순수 추출 시간 (평균, 중앙값, P95)\n    4. LLM 호출 비용: 토큰 사용량 × 단가 (입력/출력 토큰 구분)\n  - LLM 단가는 환경변수 또는 config.json에서 주입 (예: CLAUDE_HAIKU_INPUT_PRICE_PER_MTK=0.25, OUTPUT=1.25)\n  - 측정 시점의 공식 단가를 benchmarks/llm_pricing.json에 기록 (날짜, 모델명, 단가)\n  - 결과를 benchmarks/results.md에 마크다운 표로 추가:\n    - CPU 기본 벤치마크 (task 14 결과)\n    - GPU 옵션 벤치마크 (있을 경우)\n    - 추출 방식 비교 표 (규칙 vs 규칙+LLM, 정확도/경고/시간/비용)\n- 비용 계산 유틸: benchmarks/cost_calculator.py (토큰 카운트 → 비용 변환)\n- README에 벤치마크 결과 요약 링크 추가",
+        "testStrategy": "벤치마크 스크립트 실행 후 results.md에 비교 표 생성 확인. LLM 비용 계산이 정확한지 수동 검증 (샘플 1장 토큰 수 × 단가). 정확도, 시간, 비용 모두 측정되었는지 확인.",
+        "priority": "medium",
+        "dependencies": [
+          "14",
+          "22"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 7,
+        "recommendedSubtasks": 8,
+        "expansionPrompt": "추출 벤치마크를 다음으로 세분화: 1) extraction_benchmark.py 작성, 2) 규칙 기반 추출 실행 및 측정, 3) LLM 추출 실행 및 측정, 4) 필드 정확도 계산, 5) 검증 경고 건수 집계, 6) 처리시간 측정, 7) LLM 비용 계산(토큰×단가), 8) results.md에 비교 표 추가"
+      },
+      {
+        "id": "29",
+        "title": "보안 및 개인정보 보호 강화 (업로드 검증, 보관 기간, 레이트 리밋, CORS)",
+        "description": "업로드 파일 형식/크기 제한 및 매직 바이트 검사, 보관 기간 정책에 따른 자동 삭제, 엔드포인트별 레이트 리밋, CORS 화이트리스트, 로그 개인정보 점검",
+        "details": "- 업로드 파일 검증 (apps/api/app/validation/file_validator.py):\n  - 허용 형식: image/png, image/jpeg, application/pdf\n  - 크기 제한: 최대 10MB (환경변수 MAX_UPLOAD_SIZE_MB)\n  - 매직 바이트 검사: python-magic 또는 filetype 라이브러리로 실제 파일 타입 확인\n  - 검증 실패 시 400 Bad Request, requestId 포함 에러 반환\n- 보관 기간 정책 (apps/api/app/workers/cleanup_worker.py):\n  - arq 주기 작업으로 매일 실행\n  - 환경변수 DATA_RETENTION_DAYS (기본: 30일) 이후 문서 및 파일 자동 삭제\n  - DB 레코드는 soft delete (deleted_at 타임스탬프) 또는 hard delete (설정 가능)\n  - S3/로컬 스토리지 파일도 함께 삭제\n- 레이트 리밋 (slowapi 또는 fastapi-limiter):\n  - POST /api/documents (업로드): 분당 10건\n  - POST /api/documents/{id}/reextract: 시간당 5건 (LLM 비용 방지)\n  - 기타 GET 엔드포인트: 분당 100건\n  - 초과 시 429 Too Many Requests\n- CORS 화이트리스트 (apps/api/app/main.py):\n  - 환경변수 ALLOWED_ORIGINS (쉼표 구분 리스트)\n  - 프로덕션: 특정 도메인만 허용, 개발: localhost 허용\n- 로그 개인정보 점검 테스트 (apps/api/tests/test_logging_privacy.py):\n  - 로그 출력에 문서 본문 텍스트, 사업자등록번호 등이 포함되지 않는지 검증\n  - 구조화 로깅에서 민감 필드 마스킹 (예: business_number → \"***-**-12345\")",
+        "testStrategy": "pytest로 파일 검증(잘못된 형식, 초과 크기 업로드 거부 확인). 보관 기간 워커 실행 후 오래된 레코드 삭제 검증. 레이트 리밋 초과 요청 시 429 응답 확인. CORS preflight 요청 테스트. 로그 출력에서 민감 정보 누락 확인.",
+        "priority": "high",
+        "dependencies": [
+          "19",
+          "20"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 7,
+        "recommendedSubtasks": 9,
+        "expansionPrompt": "보안 강화를 다음으로 세분화: 1) 파일 형식/크기 제한 로직, 2) 매직 바이트 검사(python-magic), 3) 보관 기간 정책 워커 작성, 4) DB 레코드 삭제 로직(soft/hard delete), 5) 레이트 리밋 미들웨어(slowapi), 6) CORS 화이트리스트 설정, 7) 로그 개인정보 마스킹, 8) 로그 점검 테스트 작성, 9) 전체 보안 기능 통합 테스트"
+      },
+      {
+        "id": "30",
+        "title": "라이브 데모 배포 및 샘플 체험 기능 구성",
+        "description": "CPU 기반 데모 환경 배포, 샘플 문서 원클릭 체험, LLM은 샘플에만 허용, 모델 가중치 캐시로 콜드 스타트 최적화",
+        "details": "- 배포 대상 선정 (사용자 확인 후 진행):\n  - 제안 옵션: Railway, Fly.io, Render (CPU 인스턴스), AWS EC2 t3.medium, Google Cloud Run\n  - 요구사항: Docker 지원, 최소 2GB RAM, 지속적 스토리지(볼륨)\n- Docker 이미지 최적화:\n  - 멀티 스테이지 빌드로 크기 최소화\n  - PaddleOCR 모델 가중치를 이미지에 포함 (콜드 스타트 시간 단축)\n  - 환경변수 MODEL_CACHE_DIR=/app/.paddleocr 설정\n- 샘플 문서 원클릭 체험 기능 (apps/web/app/demo/page.tsx):\n  - \"샘플로 시작하기\" 버튼\n  - 미리 준비된 합성 샘플 3종 선택 (깨끗한/기울어진/촬영)\n  - 선택 시 자동 업로드 및 처리, 검수 화면으로 이동\n- LLM 사용 제한:\n  - 샘플 문서에만 LLM 추출 허용 (파일 해시 화이트리스트)\n  - 일반 사용자 업로드 문서는 규칙 기반만 사용\n  - 환경변수 DEMO_MODE=true, LLM_WHITELIST_HASHES 설정\n- 배포 구성 파일 작성 (deploy/railway.toml 또는 fly.toml):\n  - 환경변수 주입 (DB, Redis, API 키 제외)\n  - 헬스체크 엔드포인트 설정\n  - 자동 재시작 정책\n- README에 데모 URL 및 \"샘플로 시작하기\" 안내 추가",
+        "testStrategy": "로컬 Docker 이미지 빌드 후 콜드 스타트 시간 측정 (모델 로딩 시간 < 30초 목표). 배포 후 데모 URL 접속, 샘플 체험 워크플로 완료 확인. LLM이 샘플에만 동작하는지 검증.",
+        "priority": "high",
+        "dependencies": [
+          "28",
+          "29",
+          "5",
+          "24",
+          "25"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 8,
+        "recommendedSubtasks": 10,
+        "expansionPrompt": "데모 배포를 다음으로 세분화: 1) 배포 플랫폼 선정, 2) Docker 이미지 최적화(멀티 스테이지), 3) 모델 가중치 이미지 포함, 4) 샘플 체험 페이지 작성, 5) 샘플 문서 선택 UI, 6) LLM 화이트리스트 설정, 7) 배포 구성 파일 작성, 8) 헬스체크 및 재시작 정책, 9) 배포 실행 및 검증, 10) README에 데모 URL 추가"
+      },
+      {
+        "id": "31",
+        "title": "README 및 아키텍처 문서 작성 (다이어그램, 실행 방법, 벤치마크, 한계)",
+        "description": "처음 보는 사람이 5분 안에 로컬 실행과 데모 체험이 가능하도록 README 작성, 아키텍처 다이어그램, 환경변수 설명, 벤치마크 결과 표, 데모 GIF, 한계 명시",
+        "details": "- README.md 구조:\n  1. 프로젝트 소개: DocuLens 설명, 주요 기능 3줄 요약\n  2. 데모: 라이브 데모 URL, 샘플 체험 안내, 데모 GIF (업로드 → 검수 → 승인 과정)\n  3. 아키텍처 다이어그램: Mermaid 또는 이미지로 시스템 구성도 (Next.js ↔ FastAPI ↔ PostgreSQL/Redis, 워커, OCR 엔진)\n  4. 빠른 시작 (5분 이내):\n     - 사전 요구사항: Docker, Docker Compose\n     - .env 파일 복사 및 최소 환경변수 설정 (DB 비밀번호만)\n     - `docker compose up` 명령어\n     - 브라우저에서 http://localhost:3000 접속\n     - 샘플 업로드 또는 데모 페이지 안내\n  5. 환경변수 설명: .env.example 기반으로 필수/선택 항목 정리 (표 형식)\n  6. 벤치마크 결과 요약:\n     - OCR 엔진별 CER, 처리시간 (task 14 결과)\n     - 추출 방식별 정확도, 비용 비교 (task 28 결과)\n     - 측정값만 기재, 해석 최소화\n  7. 기술 스택: Python 3.12, FastAPI, Next.js 15, PaddleOCR v5, PostgreSQL, Redis\n  8. 한계 및 알려진 이슈:\n     - 촬영 문서(원근 왜곡, 조명 불균일)의 정확도 하락 (CER 10% → 25% 예상)\n     - 비표준 양식(표 구조 변형)에서 표 인식 실패 가능\n     - LLM 추출은 비용 발생하므로 데모에서만 제한적 사용\n  9. 기여 및 라이선스\n- 아키텍처 다이어그램 작성 (docs/architecture.png 또는 Mermaid):\n  - 클라이언트 → Next.js → FastAPI API → Service → Repository → DB\n  - 업로드 → arq 워커 (전처리 → OCR → 추출 → 검증) → DB 저장\n  - SSE 진행률 스트리밍\n- 데모 GIF 생성: Playwright 또는 수동 녹화로 전체 워크플로 캡처 (10초 이내)",
+        "testStrategy": "새로운 개발자가 README만 보고 5분 내 docker compose up 실행 및 localhost:3000 접속 성공하는지 확인. 환경변수 누락 시 명확한 에러 메시지 출력. 벤치마크 표에 모든 측정값 포함 확인.",
+        "priority": "high",
+        "dependencies": [
+          "30",
+          "28"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 6,
+        "recommendedSubtasks": 8,
+        "expansionPrompt": "README 작성을 다음으로 세분화: 1) 프로젝트 소개 및 주요 기능 요약, 2) 데모 URL 및 GIF 추가, 3) 아키텍처 다이어그램 작성(Mermaid), 4) 빠른 시작 가이드 작성, 5) 환경변수 설명 표 작성, 6) 벤치마크 결과 요약 추가, 7) 기술 스택 및 한계 명시, 8) 기여/라이선스 섹션"
+      },
+      {
+        "id": "32",
+        "title": "숨고 프로필용 케이스 스터디 작성",
+        "description": "문제, 접근, 정확도 수치, 처리시간, 운영 비용, 확장 가능 영역을 순서대로 정리한 케이스 스터디 문서 작성, 모든 수치는 벤치마크 결과 기반",
+        "details": "- docs/case-study.md 작성:\n  1. 문제 정의:\n     - 거래명세서 수작업 입력의 시간 소요 및 오류율\n     - 기존 OCR 솔루션의 한계 (비표준 양식 대응 어려움, 높은 비용)\n  2. 접근 방식:\n     - PaddleOCR v5 한국어 모델 + 표 구조 인식 조합\n     - 규칙 기반 추출 + 선택적 LLM 보강\n     - 체크섬/수식 검증으로 오류 사전 감지\n     - 검수 UI로 최종 확인 및 수정\n  3. 정확도 수치 (benchmarks/results.md 기반):\n     - OCR CER: PaddleOCR CPU 기준 X%, Tesseract 대비 Y% 개선\n     - 헤더 필드 정확도: 규칙 기반 Z%, 규칙+LLM A%\n     - 품목 표 셀 정확도: B%\n     - 검증 경고 탐지율: C건/30장\n  4. 처리시간:\n     - 1페이지당 평균 처리시간: D초 (CPU), E초 (GPU 옵션)\n     - 전처리 F초 + OCR G초 + 추출/검증 H초\n  5. 운영 비용:\n     - CPU 인스턴스 월 비용: $I (2GB RAM 기준)\n     - LLM 비용: 문서당 J토큰 × 단가 = $K (선택 사용 시)\n     - 1,000건 처리 기준 총 비용 추정\n  6. 확장 가능 영역:\n     - 다른 문서 유형: 견적서, 세금계산서, 계약서 등 (규칙 재정의)\n     - ERP/회계 시스템 연동: API 엔드포인트로 추출 결과 전송\n     - 일괄 처리: 여러 문서 동시 업로드 및 병렬 처리\n     - 커스텀 템플릿: 고객별 양식 학습 및 규칙 추가\n  7. 결론: 정확도/속도/비용 균형, 실무 적용 가능성\n- 모든 수치는 benchmarks/ 측정 결과를 참조하여 기재\n- 시각 자료: 처리 과정 스크린샷, 정확도 비교 그래프 (선택)\n- 숨고 프로필에 첨부 가능한 PDF 버전 생성 (선택)",
+        "testStrategy": "케이스 스터디의 모든 수치가 benchmarks/results.md와 일치하는지 검증. 확장 영역이 구체적이고 실현 가능한지 검토. 외부 리뷰어가 읽고 프로젝트 이해 가능한지 확인.",
+        "priority": "medium",
+        "dependencies": [
+          "31"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 7,
+        "expansionPrompt": "케이스 스터디를 다음으로 세분화: 1) 문제 정의 섹션 작성, 2) 접근 방식 섹션 작성, 3) 정확도 수치 정리(벤치마크 기반), 4) 처리시간 섹션 작성, 5) 운영 비용 섹션 작성, 6) 확장 가능 영역 섹션 작성, 7) 결론 및 시각 자료 추가"
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-10-21T13:59:49.132Z",
+      "taskCount": 32,
+      "completedCount": 1,
+      "tags": [
+        "master"
+      ]
+    }
+  }
+}
