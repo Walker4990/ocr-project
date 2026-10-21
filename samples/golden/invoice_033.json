@@ -1,0 +1,90 @@
+{
+  "image": "invoice_033.jpg",
+  "template_id": "red_totals_top",
+  "difficulty": "low_res",
+  "seed": 33,
+  "invoice": {
+    "document_no": "2025-4661",
+    "issue_date": "2025-11-23",
+    "supplier": {
+      "name": "주식회사 첨단",
+      "business_number": "685-22-38217",
+      "representative": "홍영수",
+      "address": "제주특별자치도 용인시 수지구 반포대14가 509-7"
+    },
+    "buyer": {
+      "name": "유한회사 미래",
+      "business_number": "384-62-87276",
+      "representative": "최정순",
+      "address": "서울특별시 노원구 논현5로 526"
+    },
+    "items": [
+      {
+        "name": "무선 마우스",
+        "spec": "1EA",
+        "quantity": 20,
+        "unit_price": 10800,
+        "amount": 216000
+      },
+      {
+        "name": "안전화 270mm",
+        "spec": "1켤레",
+        "quantity": 20,
+        "unit_price": 49100,
+        "amount": 982000
+      },
+      {
+        "name": "화이트보드 마커",
+        "spec": "10본",
+        "quantity": 32,
+        "unit_price": 9300,
+        "amount": 297600
+      },
+      {
+        "name": "배터리 AA",
+        "spec": "20개",
+        "quantity": 4,
+        "unit_price": 11700,
+        "amount": 46800
+      },
+      {
+        "name": "산업용 장갑",
+        "spec": "10켤레",
+        "quantity": 39,
+        "unit_price": 9700,
+        "amount": 378300
+      },
+      {
+        "name": "LED 형광등 20W",
+        "spec": "1EA",
+        "quantity": 18,
+        "unit_price": 5200,
+        "amount": 93600
+      },
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 36,
+        "unit_price": 4500,
+        "amount": 162000
+      },
+      {
+        "name": "스프레이 페인트",
+        "spec": "12통",
+        "quantity": 8,
+        "unit_price": 20200,
+        "amount": 161600
+      },
+      {
+        "name": "물티슈 캡형",
+        "spec": "100매",
+        "quantity": 4,
+        "unit_price": 2500,
+        "amount": 10000
+      }
+    ],
+    "supply_amount": 2347900,
+    "tax_amount": 234790,
+    "total_amount": 2582690
+  }
+}

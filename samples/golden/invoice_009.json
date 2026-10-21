@@ -1,0 +1,34 @@
+{
+  "image": "invoice_009.png",
+  "template_id": "mono_receipt",
+  "difficulty": "skewed",
+  "seed": 9,
+  "invoice": {
+    "document_no": "2025-5473",
+    "issue_date": "2025-03-24",
+    "supplier": {
+      "name": "(유) 미래글로벌보안",
+      "business_number": "575-79-61166",
+      "representative": "김예진",
+      "address": "대전광역시 금천구 개포길 161-22"
+    },
+    "buyer": {
+      "name": "(주) 글로벌랩스",
+      "business_number": "374-18-30491",
+      "representative": "유은서",
+      "address": "강원특별자치도 김포시 오금길 792 (지현이이동)"
+    },
+    "items": [
+      {
+        "name": "화이트보드 마커",
+        "spec": "10본",
+        "quantity": 30,
+        "unit_price": 9200,
+        "amount": 276000
+      }
+    ],
+    "supply_amount": 276000,
+    "tax_amount": 27600,
+    "total_amount": 303600
+  }
+}

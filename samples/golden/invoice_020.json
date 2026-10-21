@@ -1,0 +1,69 @@
+{
+  "image": "invoice_020.png",
+  "template_id": "classic",
+  "difficulty": "clean",
+  "seed": 20,
+  "invoice": {
+    "document_no": "2025-5387",
+    "issue_date": "2025-12-10",
+    "supplier": {
+      "name": "주식회사 모두",
+      "business_number": "841-88-24774",
+      "representative": "홍미숙",
+      "address": "대구광역시 종로구 선릉1길 973 (중수김강면)"
+    },
+    "buyer": {
+      "name": "유한회사 고려첨단플랫폼",
+      "business_number": "367-87-16634",
+      "representative": "박미경",
+      "address": "경기도 고양시 학동길 313-89"
+    },
+    "items": [
+      {
+        "name": "배터리 AA",
+        "spec": "20개",
+        "quantity": 9,
+        "unit_price": 6600,
+        "amount": 59400
+      },
+      {
+        "name": "무선 마우스",
+        "spec": "1EA",
+        "quantity": 31,
+        "unit_price": 17100,
+        "amount": 530100
+      },
+      {
+        "name": "A4 복사용지 80g",
+        "spec": "500매",
+        "quantity": 29,
+        "unit_price": 6300,
+        "amount": 182700
+      },
+      {
+        "name": "택배 박스 3호",
+        "spec": "50장",
+        "quantity": 14,
+        "unit_price": 25500,
+        "amount": 357000
+      },
+      {
+        "name": "안전화 270mm",
+        "spec": "1켤레",
+        "quantity": 21,
+        "unit_price": 38200,
+        "amount": 802200
+      },
+      {
+        "name": "볼펜 0.5mm 흑색",
+        "spec": "12자루",
+        "quantity": 44,
+        "unit_price": 5000,
+        "amount": 220000
+      }
+    ],
+    "supply_amount": 2151400,
+    "tax_amount": 215140,
+    "total_amount": 2366540
+  }
+}

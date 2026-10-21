@@ -1,0 +1,34 @@
+{
+  "image": "invoice_025.png",
+  "template_id": "classic",
+  "difficulty": "skewed",
+  "seed": 25,
+  "invoice": {
+    "document_no": "2026-6949",
+    "issue_date": "2026-08-02",
+    "supplier": {
+      "name": "(주) 라온백제출판",
+      "business_number": "487-02-35068",
+      "representative": "곽상훈",
+      "address": "울산광역시 성동구 석촌호수길 845-24 (미숙박양동)"
+    },
+    "buyer": {
+      "name": "(유) 씨앤씨",
+      "business_number": "413-82-77583",
+      "representative": "장우진",
+      "address": "부산광역시 서대문구 서초대길 177"
+    },
+    "items": [
+      {
+        "name": "멀티탭 3m",
+        "spec": "6구",
+        "quantity": 20,
+        "unit_price": 7400,
+        "amount": 148000
+      }
+    ],
+    "supply_amount": 148000,
+    "tax_amount": 14800,
+    "total_amount": 162800
+  }
+}

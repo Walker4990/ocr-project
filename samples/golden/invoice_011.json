@@ -1,0 +1,55 @@
+{
+  "image": "invoice_011.jpg",
+  "template_id": "blue_stacked",
+  "difficulty": "low_res",
+  "seed": 11,
+  "invoice": {
+    "document_no": "2025-9756",
+    "issue_date": "2025-02-12",
+    "supplier": {
+      "name": "유한회사 에코윈드뷰티",
+      "business_number": "564-72-76296",
+      "representative": "박재현",
+      "address": "강원특별자치도 삼척시 테헤란8로 988-58"
+    },
+    "buyer": {
+      "name": "주식회사 중앙",
+      "business_number": "563-66-96231",
+      "representative": "박도윤",
+      "address": "충청남도 계룡시 반포대거리 863"
+    },
+    "items": [
+      {
+        "name": "무선 마우스",
+        "spec": "1EA",
+        "quantity": 29,
+        "unit_price": 11400,
+        "amount": 330600
+      },
+      {
+        "name": "안전화 270mm",
+        "spec": "1켤레",
+        "quantity": 10,
+        "unit_price": 43500,
+        "amount": 435000
+      },
+      {
+        "name": "산업용 장갑",
+        "spec": "10켤레",
+        "quantity": 35,
+        "unit_price": 5500,
+        "amount": 192500
+      },
+      {
+        "name": "노트북 거치대",
+        "spec": "1EA",
+        "quantity": 41,
+        "unit_price": 29700,
+        "amount": 1217700
+      }
+    ],
+    "supply_amount": 2175800,
+    "tax_amount": 217580,
+    "total_amount": 2393380
+  }
+}

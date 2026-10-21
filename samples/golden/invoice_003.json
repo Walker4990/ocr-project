@@ -1,0 +1,83 @@
+{
+  "image": "invoice_003.png",
+  "template_id": "red_totals_top",
+  "difficulty": "clean",
+  "seed": 3,
+  "invoice": {
+    "document_no": "2025-2612",
+    "issue_date": "2025-03-07",
+    "supplier": {
+      "name": "주식회사 스타출판",
+      "business_number": "344-76-89161",
+      "representative": "김경숙",
+      "address": "전북특별자치도 천안시 서북구 논현가 488 (순옥김윤마을)"
+    },
+    "buyer": {
+      "name": "(주) 코어고구려반도체",
+      "business_number": "234-48-98943",
+      "representative": "최수진",
+      "address": "광주광역시 강서구 선릉97길 37-18"
+    },
+    "items": [
+      {
+        "name": "배터리 AA",
+        "spec": "20개",
+        "quantity": 31,
+        "unit_price": 10500,
+        "amount": 325500
+      },
+      {
+        "name": "스테이플러 심",
+        "spec": "10곽",
+        "quantity": 36,
+        "unit_price": 1800,
+        "amount": 64800
+      },
+      {
+        "name": "A4 복사용지 80g",
+        "spec": "500매",
+        "quantity": 26,
+        "unit_price": 6000,
+        "amount": 156000
+      },
+      {
+        "name": "산업용 장갑",
+        "spec": "10켤레",
+        "quantity": 10,
+        "unit_price": 9000,
+        "amount": 90000
+      },
+      {
+        "name": "멀티탭 3m",
+        "spec": "6구",
+        "quantity": 41,
+        "unit_price": 9900,
+        "amount": 405900
+      },
+      {
+        "name": "안전화 270mm",
+        "spec": "1켤레",
+        "quantity": 34,
+        "unit_price": 35700,
+        "amount": 1213800
+      },
+      {
+        "name": "프린터 토너 카트리지",
+        "spec": "1EA",
+        "quantity": 48,
+        "unit_price": 84900,
+        "amount": 4075200
+      },
+      {
+        "name": "택배 박스 3호",
+        "spec": "50장",
+        "quantity": 43,
+        "unit_price": 15300,
+        "amount": 657900
+      }
+    ],
+    "supply_amount": 6989100,
+    "tax_amount": 698910,
+    "total_amount": 7688010
+  }
+}

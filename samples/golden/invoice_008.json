@@ -1,0 +1,41 @@
+{
+  "image": "invoice_008.png",
+  "template_id": "red_totals_top",
+  "difficulty": "skewed",
+  "seed": 8,
+  "invoice": {
+    "document_no": "2025-7523",
+    "issue_date": "2025-02-01",
+    "supplier": {
+      "name": "(유) 시너지랩스",
+      "business_number": "333-48-61501",
+      "representative": "김민수",
+      "address": "경상북도 홍성군 반포대가 507"
+    },
+    "buyer": {
+      "name": "주식회사 신라",
+      "business_number": "230-25-07174",
+      "representative": "김경수",
+      "address": "울산광역시 강서구 봉은사411가 677-8 (영일김배마을)"
+    },
+    "items": [
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 33,
+        "unit_price": 6000,
+        "amount": 198000
+      },
+      {
+        "name": "LED 형광등 20W",
+        "spec": "1EA",
+        "quantity": 26,
+        "unit_price": 3800,
+        "amount": 98800
+      }
+    ],
+    "supply_amount": 296800,
+    "tax_amount": 29680,
+    "total_amount": 326480
+  }
+}

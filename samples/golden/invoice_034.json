@@ -1,0 +1,76 @@
+{
+  "image": "invoice_034.jpg",
+  "template_id": "mono_receipt",
+  "difficulty": "low_res",
+  "seed": 34,
+  "invoice": {
+    "document_no": "2025-9044",
+    "issue_date": "2025-09-19",
+    "supplier": {
+      "name": "(유) 조선",
+      "business_number": "642-46-95968",
+      "representative": "김경수",
+      "address": "전라남도 화성시 양재천19길 356-79 (은경권동)"
+    },
+    "buyer": {
+      "name": "(유) 모두금고",
+      "business_number": "129-30-04906",
+      "representative": "심은서",
+      "address": "광주광역시 서대문구 논현7길 587 (민서김임동)"
+    },
+    "items": [
+      {
+        "name": "종이컵 6.5oz",
+        "spec": "1000개",
+        "quantity": 10,
+        "unit_price": 8200,
+        "amount": 82000
+      },
+      {
+        "name": "스테이플러 심",
+        "spec": "10곽",
+        "quantity": 18,
+        "unit_price": 1100,
+        "amount": 19800
+      },
+      {
+        "name": "택배 박스 3호",
+        "spec": "50장",
+        "quantity": 40,
+        "unit_price": 23800,
+        "amount": 952000
+      },
+      {
+        "name": "클리어 파일",
+        "spec": "20매",
+        "quantity": 50,
+        "unit_price": 2000,
+        "amount": 100000
+      },
+      {
+        "name": "화이트보드 마커",
+        "spec": "10본",
+        "quantity": 49,
+        "unit_price": 6900,
+        "amount": 338100
+      },
+      {
+        "name": "볼펜 0.5mm 흑색",
+        "spec": "12자루",
+        "quantity": 6,
+        "unit_price": 4600,
+        "amount": 27600
+      },
+      {
+        "name": "안전화 270mm",
+        "spec": "1켤레",
+        "quantity": 24,
+        "unit_price": 31100,
+        "amount": 746400
+      }
+    ],
+    "supply_amount": 2265900,
+    "tax_amount": 226590,
+    "total_amount": 2492490
+  }
+}

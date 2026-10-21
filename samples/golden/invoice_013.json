@@ -1,0 +1,55 @@
+{
+  "image": "invoice_013.jpg",
+  "template_id": "red_totals_top",
+  "difficulty": "low_res",
+  "seed": 13,
+  "invoice": {
+    "document_no": "2025-1392",
+    "issue_date": "2025-05-31",
+    "supplier": {
+      "name": "(유) 푸른푸른보안",
+      "business_number": "366-38-30426",
+      "representative": "장채원",
+      "address": "충청북도 성남시 분당구 양재천로 858"
+    },
+    "buyer": {
+      "name": "(주) 미래",
+      "business_number": "768-30-24110",
+      "representative": "김지우",
+      "address": "세종특별자치시 송파구 테헤란53가 440 (지우윤윤면)"
+    },
+    "items": [
+      {
+        "name": "무선 마우스",
+        "spec": "1EA",
+        "quantity": 2,
+        "unit_price": 16500,
+        "amount": 33000
+      },
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 9,
+        "unit_price": 4800,
+        "amount": 43200
+      },
+      {
+        "name": "스테이플러 심",
+        "spec": "10곽",
+        "quantity": 39,
+        "unit_price": 2000,
+        "amount": 78000
+      },
+      {
+        "name": "USB 3.0 허브",
+        "spec": "4포트",
+        "quantity": 18,
+        "unit_price": 8100,
+        "amount": 145800
+      }
+    ],
+    "supply_amount": 300000,
+    "tax_amount": 30000,
+    "total_amount": 330000
+  }
+}

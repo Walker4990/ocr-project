@@ -1,0 +1,34 @@
+{
+  "image": "invoice_005.png",
+  "template_id": "classic",
+  "difficulty": "skewed",
+  "seed": 5,
+  "invoice": {
+    "document_no": "2025-2570",
+    "issue_date": "2025-02-23",
+    "supplier": {
+      "name": "(유) 한빛",
+      "business_number": "738-33-58740",
+      "representative": "한준혁",
+      "address": "세종특별자치시 강동구 가락로 381-61"
+    },
+    "buyer": {
+      "name": "유한회사 이노네트워크",
+      "business_number": "808-84-86848",
+      "representative": "김서윤",
+      "address": "대구광역시 남구 역삼2가 2 (영길김읍)"
+    },
+    "items": [
+      {
+        "name": "OPP 테이프 48mm",
+        "spec": "50롤",
+        "quantity": 42,
+        "unit_price": 24300,
+        "amount": 1020600
+      }
+    ],
+    "supply_amount": 1020600,
+    "tax_amount": 102060,
+    "total_amount": 1122660
+  }
+}

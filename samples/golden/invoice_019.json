@@ -1,0 +1,76 @@
+{
+  "image": "invoice_019.jpg",
+  "template_id": "mono_receipt",
+  "difficulty": "photo",
+  "seed": 19,
+  "invoice": {
+    "document_no": "2025-8888",
+    "issue_date": "2025-04-27",
+    "supplier": {
+      "name": "(주) 유니온",
+      "business_number": "794-06-85275",
+      "representative": "김성현",
+      "address": "대구광역시 동작구 봉은사65거리 919 (광수강양읍)"
+    },
+    "buyer": {
+      "name": "유한회사 시너지기술",
+      "business_number": "224-66-32685",
+      "representative": "이미숙",
+      "address": "경상북도 속초시 석촌호수263로 197 (성민박마을)"
+    },
+    "items": [
+      {
+        "name": "종이컵 6.5oz",
+        "spec": "1000개",
+        "quantity": 21,
+        "unit_price": 7600,
+        "amount": 159600
+      },
+      {
+        "name": "안전화 270mm",
+        "spec": "1켤레",
+        "quantity": 7,
+        "unit_price": 41700,
+        "amount": 291900
+      },
+      {
+        "name": "클리어 파일",
+        "spec": "20매",
+        "quantity": 21,
+        "unit_price": 4400,
+        "amount": 92400
+      },
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 2,
+        "unit_price": 4400,
+        "amount": 8800
+      },
+      {
+        "name": "멀티탭 3m",
+        "spec": "6구",
+        "quantity": 40,
+        "unit_price": 14200,
+        "amount": 568000
+      },
+      {
+        "name": "볼펜 0.5mm 흑색",
+        "spec": "12자루",
+        "quantity": 5,
+        "unit_price": 3600,
+        "amount": 18000
+      },
+      {
+        "name": "배터리 AA",
+        "spec": "20개",
+        "quantity": 13,
+        "unit_price": 11800,
+        "amount": 153400
+      }
+    ],
+    "supply_amount": 1292100,
+    "tax_amount": 129210,
+    "total_amount": 1421310
+  }
+}

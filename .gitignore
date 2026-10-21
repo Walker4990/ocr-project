@@ -23,3 +23,10 @@ node_modules/
 
 # OS specific
 .DS_Store
+
+# 골든셋 생성기가 내려받는 폰트 (OFL, 재배포 대신 fetch_fonts.py 사용)
+samples/fonts/
+
+# Python 캐시
+__pycache__/
+*.pyc

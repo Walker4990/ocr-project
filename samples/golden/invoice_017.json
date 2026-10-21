@@ -1,0 +1,90 @@
+{
+  "image": "invoice_017.jpg",
+  "template_id": "serif_simple",
+  "difficulty": "photo",
+  "seed": 17,
+  "invoice": {
+    "document_no": "2025-1134",
+    "issue_date": "2025-05-07",
+    "supplier": {
+      "name": "유한회사 백제",
+      "business_number": "635-54-49710",
+      "representative": "이지연",
+      "address": "부산광역시 종로구 개포가 822-41 (성민최김읍)"
+    },
+    "buyer": {
+      "name": "주식회사 브레인항공",
+      "business_number": "475-38-28622",
+      "representative": "오도윤",
+      "address": "강원특별자치도 화천군 가락268거리 382 (지원서동)"
+    },
+    "items": [
+      {
+        "name": "멀티탭 3m",
+        "spec": "6구",
+        "quantity": 21,
+        "unit_price": 13400,
+        "amount": 281400
+      },
+      {
+        "name": "프린터 토너 카트리지",
+        "spec": "1EA",
+        "quantity": 44,
+        "unit_price": 110500,
+        "amount": 4862000
+      },
+      {
+        "name": "A4 복사용지 80g",
+        "spec": "500매",
+        "quantity": 9,
+        "unit_price": 5700,
+        "amount": 51300
+      },
+      {
+        "name": "LED 형광등 20W",
+        "spec": "1EA",
+        "quantity": 4,
+        "unit_price": 6000,
+        "amount": 24000
+      },
+      {
+        "name": "물티슈 캡형",
+        "spec": "100매",
+        "quantity": 13,
+        "unit_price": 1400,
+        "amount": 18200
+      },
+      {
+        "name": "택배 박스 3호",
+        "spec": "50장",
+        "quantity": 46,
+        "unit_price": 18800,
+        "amount": 864800
+      },
+      {
+        "name": "종이컵 6.5oz",
+        "spec": "1000개",
+        "quantity": 36,
+        "unit_price": 8400,
+        "amount": 302400
+      },
+      {
+        "name": "USB 3.0 허브",
+        "spec": "4포트",
+        "quantity": 14,
+        "unit_price": 16700,
+        "amount": 233800
+      },
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 35,
+        "unit_price": 4500,
+        "amount": 157500
+      }
+    ],
+    "supply_amount": 6795400,
+    "tax_amount": 679540,
+    "total_amount": 7474940
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "image": "invoice_021.png",
+  "template_id": "blue_stacked",
+  "difficulty": "clean",
+  "seed": 21,
+  "invoice": {
+    "document_no": "2025-3806",
+    "issue_date": "2025-05-29",
+    "supplier": {
+      "name": "유한회사 하나자동차",
+      "business_number": "269-54-68499",
+      "representative": "박서윤",
+      "address": "제주특별자치도 안산시 단원구 압구정로 439 (성수권읍)"
+    },
+    "buyer": {
+      "name": "(주) 아름",
+      "business_number": "751-37-78499",
+      "representative": "서채원",
+      "address": "경기도 연천군 봉은사502로 465 (민지이리)"
+    },
+    "items": [
+      {
+        "name": "산업용 장갑",
+        "spec": "10켤레",
+        "quantity": 16,
+        "unit_price": 8300,
+        "amount": 132800
+      },
+      {
+        "name": "안전화 270mm",
+        "spec": "1켤레",
+        "quantity": 1,
+        "unit_price": 28100,
+        "amount": 28100
+      },
+      {
+        "name": "무선 마우스",
+        "spec": "1EA",
+        "quantity": 38,
+        "unit_price": 18400,
+        "amount": 699200
+      },
+      {
+        "name": "배터리 AA",
+        "spec": "20개",
+        "quantity": 5,
+        "unit_price": 8700,
+        "amount": 43500
+      }
+    ],
+    "supply_amount": 903600,
+    "tax_amount": 90360,
+    "total_amount": 993960
+  }
+}

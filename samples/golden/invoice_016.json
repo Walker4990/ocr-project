@@ -1,0 +1,83 @@
+{
+  "image": "invoice_016.jpg",
+  "template_id": "blue_stacked",
+  "difficulty": "photo",
+  "seed": 16,
+  "invoice": {
+    "document_no": "2026-9809",
+    "issue_date": "2026-04-13",
+    "supplier": {
+      "name": "유한회사 원더발해자동차",
+      "business_number": "471-61-78720",
+      "representative": "김준혁",
+      "address": "인천광역시 관악구 압구정거리 683 (하은조동)"
+    },
+    "buyer": {
+      "name": "(유) 가야바이오",
+      "business_number": "392-54-37132",
+      "representative": "장경자",
+      "address": "전북특별자치도 고양시 일산서구 영동대61거리 530-83 (하윤이동)"
+    },
+    "items": [
+      {
+        "name": "A4 복사용지 80g",
+        "spec": "500매",
+        "quantity": 43,
+        "unit_price": 5500,
+        "amount": 236500
+      },
+      {
+        "name": "택배 박스 3호",
+        "spec": "50장",
+        "quantity": 48,
+        "unit_price": 18600,
+        "amount": 892800
+      },
+      {
+        "name": "멀티탭 3m",
+        "spec": "6구",
+        "quantity": 20,
+        "unit_price": 14700,
+        "amount": 294000
+      },
+      {
+        "name": "LED 형광등 20W",
+        "spec": "1EA",
+        "quantity": 15,
+        "unit_price": 2600,
+        "amount": 39000
+      },
+      {
+        "name": "안전화 270mm",
+        "spec": "1켤레",
+        "quantity": 2,
+        "unit_price": 40900,
+        "amount": 81800
+      },
+      {
+        "name": "노트북 거치대",
+        "spec": "1EA",
+        "quantity": 39,
+        "unit_price": 15900,
+        "amount": 620100
+      },
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 41,
+        "unit_price": 5600,
+        "amount": 229600
+      },
+      {
+        "name": "배터리 AA",
+        "spec": "20개",
+        "quantity": 30,
+        "unit_price": 6100,
+        "amount": 183000
+      }
+    ],
+    "supply_amount": 2576800,
+    "tax_amount": 257680,
+    "total_amount": 2834480
+  }
+}

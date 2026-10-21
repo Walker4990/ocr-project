@@ -1,0 +1,62 @@
+{
+  "image": "invoice_002.png",
+  "template_id": "serif_simple",
+  "difficulty": "clean",
+  "seed": 2,
+  "invoice": {
+    "document_no": "2025-5965",
+    "issue_date": "2025-01-29",
+    "supplier": {
+      "name": "(주) 고려연구소",
+      "business_number": "158-12-13904",
+      "representative": "서정숙",
+      "address": "광주광역시 동작구 백제고분로 지하698 (혜진윤마을)"
+    },
+    "buyer": {
+      "name": "유한회사 윈드미래그룹",
+      "business_number": "470-22-50486",
+      "representative": "이현숙",
+      "address": "경상북도 고성군 잠실길 25 (정식김마을)"
+    },
+    "items": [
+      {
+        "name": "노트북 거치대",
+        "spec": "1EA",
+        "quantity": 26,
+        "unit_price": 28300,
+        "amount": 735800
+      },
+      {
+        "name": "USB 3.0 허브",
+        "spec": "4포트",
+        "quantity": 33,
+        "unit_price": 17200,
+        "amount": 567600
+      },
+      {
+        "name": "볼펜 0.5mm 흑색",
+        "spec": "12자루",
+        "quantity": 35,
+        "unit_price": 4100,
+        "amount": 143500
+      },
+      {
+        "name": "무선 마우스",
+        "spec": "1EA",
+        "quantity": 33,
+        "unit_price": 20300,
+        "amount": 669900
+      },
+      {
+        "name": "택배 박스 3호",
+        "spec": "50장",
+        "quantity": 3,
+        "unit_price": 21800,
+        "amount": 65400
+      }
+    ],
+    "supply_amount": 2182200,
+    "tax_amount": 218220,
+    "total_amount": 2400420
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "image": "invoice_035.jpg",
+  "template_id": "classic",
+  "difficulty": "photo",
+  "seed": 35,
+  "invoice": {
+    "document_no": "2026-6137",
+    "issue_date": "2026-05-23",
+    "supplier": {
+      "name": "(유) 글로벌",
+      "business_number": "662-43-21585",
+      "representative": "문수빈",
+      "address": "서울특별시 송파구 가락91거리 12 (예지이동)"
+    },
+    "buyer": {
+      "name": "유한회사 겨레가야소프트",
+      "business_number": "866-44-25235",
+      "representative": "김순자",
+      "address": "세종특별자치시 남구 학동29로 749"
+    },
+    "items": [
+      {
+        "name": "택배 박스 3호",
+        "spec": "50장",
+        "quantity": 46,
+        "unit_price": 24300,
+        "amount": 1117800
+      },
+      {
+        "name": "멀티탭 3m",
+        "spec": "6구",
+        "quantity": 49,
+        "unit_price": 14400,
+        "amount": 705600
+      },
+      {
+        "name": "볼펜 0.5mm 흑색",
+        "spec": "12자루",
+        "quantity": 24,
+        "unit_price": 3300,
+        "amount": 79200
+      },
+      {
+        "name": "안전화 270mm",
+        "spec": "1켤레",
+        "quantity": 33,
+        "unit_price": 28400,
+        "amount": 937200
+      },
+      {
+        "name": "배터리 AA",
+        "spec": "20개",
+        "quantity": 7,
+        "unit_price": 6000,
+        "amount": 42000
+      }
+    ],
+    "supply_amount": 2881800,
+    "tax_amount": 288180,
+    "total_amount": 3169980
+  }
+}

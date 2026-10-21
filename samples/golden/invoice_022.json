@@ -1,0 +1,41 @@
+{
+  "image": "invoice_022.png",
+  "template_id": "serif_simple",
+  "difficulty": "clean",
+  "seed": 22,
+  "invoice": {
+    "document_no": "2025-9044",
+    "issue_date": "2025-07-03",
+    "supplier": {
+      "name": "주식회사 가야정보통신",
+      "business_number": "244-32-03869",
+      "representative": "김재호",
+      "address": "부산광역시 성북구 도산대92가 903 (서현이읍)"
+    },
+    "buyer": {
+      "name": "(주) 조선플랫폼",
+      "business_number": "728-58-30184",
+      "representative": "황현주",
+      "address": "대전광역시 동작구 강남대6거리 지하146"
+    },
+    "items": [
+      {
+        "name": "종이컵 6.5oz",
+        "spec": "1000개",
+        "quantity": 18,
+        "unit_price": 6400,
+        "amount": 115200
+      },
+      {
+        "name": "스테이플러 심",
+        "spec": "10곽",
+        "quantity": 21,
+        "unit_price": 1000,
+        "amount": 21000
+      }
+    ],
+    "supply_amount": 136200,
+    "tax_amount": 13620,
+    "total_amount": 149820
+  }
+}

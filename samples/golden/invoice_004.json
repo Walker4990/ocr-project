@@ -1,0 +1,48 @@
+{
+  "image": "invoice_004.png",
+  "template_id": "mono_receipt",
+  "difficulty": "clean",
+  "seed": 4,
+  "invoice": {
+    "document_no": "2026-8793",
+    "issue_date": "2026-06-17",
+    "supplier": {
+      "name": "(유) 국민은행",
+      "business_number": "342-39-16901",
+      "representative": "김경수",
+      "address": "서울특별시 성북구 강남대1거리 849 (은정김이면)"
+    },
+    "buyer": {
+      "name": "(유) 코어유통",
+      "business_number": "839-51-78456",
+      "representative": "김예은",
+      "address": "광주광역시 종로구 석촌호수483가 296-56"
+    },
+    "items": [
+      {
+        "name": "스테이플러 심",
+        "spec": "10곽",
+        "quantity": 36,
+        "unit_price": 1600,
+        "amount": 57600
+      },
+      {
+        "name": "노트북 거치대",
+        "spec": "1EA",
+        "quantity": 49,
+        "unit_price": 19400,
+        "amount": 950600
+      },
+      {
+        "name": "A4 복사용지 80g",
+        "spec": "500매",
+        "quantity": 15,
+        "unit_price": 4600,
+        "amount": 69000
+      }
+    ],
+    "supply_amount": 1077200,
+    "tax_amount": 107720,
+    "total_amount": 1184920
+  }
+}

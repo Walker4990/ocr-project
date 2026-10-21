@@ -1,0 +1,55 @@
+{
+  "image": "invoice_024.png",
+  "template_id": "mono_receipt",
+  "difficulty": "clean",
+  "seed": 24,
+  "invoice": {
+    "document_no": "2025-8050",
+    "issue_date": "2025-06-22",
+    "supplier": {
+      "name": "유한회사 조선",
+      "business_number": "830-50-95484",
+      "representative": "엄병철",
+      "address": "대구광역시 동구 압구정71로 982-63"
+    },
+    "buyer": {
+      "name": "유한회사 푸른",
+      "business_number": "287-28-27411",
+      "representative": "곽도현",
+      "address": "대구광역시 서초구 양재천8거리 324-44 (정남김마을)"
+    },
+    "items": [
+      {
+        "name": "무선 마우스",
+        "spec": "1EA",
+        "quantity": 29,
+        "unit_price": 9300,
+        "amount": 269700
+      },
+      {
+        "name": "스테이플러 심",
+        "spec": "10곽",
+        "quantity": 47,
+        "unit_price": 1700,
+        "amount": 79900
+      },
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 8,
+        "unit_price": 5500,
+        "amount": 44000
+      },
+      {
+        "name": "클리어 파일",
+        "spec": "20매",
+        "quantity": 34,
+        "unit_price": 2000,
+        "amount": 68000
+      }
+    ],
+    "supply_amount": 461600,
+    "tax_amount": 46160,
+    "total_amount": 507760
+  }
+}

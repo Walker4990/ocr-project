@@ -1,0 +1,62 @@
+{
+  "image": "invoice_030.jpg",
+  "template_id": "classic",
+  "difficulty": "low_res",
+  "seed": 30,
+  "invoice": {
+    "document_no": "2025-8769",
+    "issue_date": "2025-12-23",
+    "supplier": {
+      "name": "(유) 중앙",
+      "business_number": "653-38-04929",
+      "representative": "윤상철",
+      "address": "서울특별시 서대문구 가락1가 955 (도윤엄마을)"
+    },
+    "buyer": {
+      "name": "유한회사 코리아",
+      "business_number": "737-84-34408",
+      "representative": "양승민",
+      "address": "전북특별자치도 음성군 석촌호수4로 133"
+    },
+    "items": [
+      {
+        "name": "볼펜 0.5mm 흑색",
+        "spec": "12자루",
+        "quantity": 1,
+        "unit_price": 4400,
+        "amount": 4400
+      },
+      {
+        "name": "물티슈 캡형",
+        "spec": "100매",
+        "quantity": 16,
+        "unit_price": 2000,
+        "amount": 32000
+      },
+      {
+        "name": "배터리 AA",
+        "spec": "20개",
+        "quantity": 5,
+        "unit_price": 6100,
+        "amount": 30500
+      },
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 39,
+        "unit_price": 4000,
+        "amount": 156000
+      },
+      {
+        "name": "스테이플러 심",
+        "spec": "10곽",
+        "quantity": 26,
+        "unit_price": 1800,
+        "amount": 46800
+      }
+    ],
+    "supply_amount": 269700,
+    "tax_amount": 26970,
+    "total_amount": 296670
+  }
+}

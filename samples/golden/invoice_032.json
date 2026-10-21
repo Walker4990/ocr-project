@@ -1,0 +1,34 @@
+{
+  "image": "invoice_032.jpg",
+  "template_id": "serif_simple",
+  "difficulty": "low_res",
+  "seed": 32,
+  "invoice": {
+    "document_no": "2026-5413",
+    "issue_date": "2026-06-06",
+    "supplier": {
+      "name": "주식회사 나루신문",
+      "business_number": "180-28-23695",
+      "representative": "김경자",
+      "address": "부산광역시 노원구 도산대759로 538-2"
+    },
+    "buyer": {
+      "name": "주식회사 발해다올정보통신",
+      "business_number": "411-31-81304",
+      "representative": "김현우",
+      "address": "대구광역시 양천구 선릉로 362-30"
+    },
+    "items": [
+      {
+        "name": "볼펜 0.5mm 흑색",
+        "spec": "12자루",
+        "quantity": 21,
+        "unit_price": 3300,
+        "amount": 69300
+      }
+    ],
+    "supply_amount": 69300,
+    "tax_amount": 6930,
+    "total_amount": 76230
+  }
+}

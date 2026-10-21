@@ -1,0 +1,34 @@
+{
+  "image": "invoice_006.png",
+  "template_id": "blue_stacked",
+  "difficulty": "skewed",
+  "seed": 6,
+  "invoice": {
+    "document_no": "2026-6114",
+    "issue_date": "2026-04-27",
+    "supplier": {
+      "name": "(주) 월드",
+      "business_number": "688-11-79467",
+      "representative": "김민서",
+      "address": "전라남도 용인시 기흥구 강남대가 933 (승현최면)"
+    },
+    "buyer": {
+      "name": "(주) 아름",
+      "business_number": "881-34-06034",
+      "representative": "김주원",
+      "address": "세종특별자치시 강남구 논현거리 603-26 (경희전김마을)"
+    },
+    "items": [
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 38,
+        "unit_price": 5600,
+        "amount": 212800
+      }
+    ],
+    "supply_amount": 212800,
+    "tax_amount": 21280,
+    "total_amount": 234080
+  }
+}

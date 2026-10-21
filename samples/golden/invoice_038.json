@@ -1,0 +1,69 @@
+{
+  "image": "invoice_038.jpg",
+  "template_id": "red_totals_top",
+  "difficulty": "photo",
+  "seed": 38,
+  "invoice": {
+    "document_no": "2026-2308",
+    "issue_date": "2026-05-16",
+    "supplier": {
+      "name": "유한회사 아름",
+      "business_number": "755-54-70292",
+      "representative": "김아름",
+      "address": "전라남도 성남시 석촌호수거리 728 (수진이진마을)"
+    },
+    "buyer": {
+      "name": "주식회사 중앙고려플랫폼",
+      "business_number": "873-14-10859",
+      "representative": "이상호",
+      "address": "전라남도 옥천군 테헤란가 118 (지원김리)"
+    },
+    "items": [
+      {
+        "name": "OPP 테이프 48mm",
+        "spec": "50롤",
+        "quantity": 46,
+        "unit_price": 24800,
+        "amount": 1140800
+      },
+      {
+        "name": "종이컵 6.5oz",
+        "spec": "1000개",
+        "quantity": 40,
+        "unit_price": 7100,
+        "amount": 284000
+      },
+      {
+        "name": "볼펜 0.5mm 흑색",
+        "spec": "12자루",
+        "quantity": 31,
+        "unit_price": 3900,
+        "amount": 120900
+      },
+      {
+        "name": "무선 마우스",
+        "spec": "1EA",
+        "quantity": 26,
+        "unit_price": 23900,
+        "amount": 621400
+      },
+      {
+        "name": "배터리 AA",
+        "spec": "20개",
+        "quantity": 40,
+        "unit_price": 7400,
+        "amount": 296000
+      },
+      {
+        "name": "안전화 270mm",
+        "spec": "1켤레",
+        "quantity": 34,
+        "unit_price": 32300,
+        "amount": 1098200
+      }
+    ],
+    "supply_amount": 3561300,
+    "tax_amount": 356130,
+    "total_amount": 3917430
+  }
+}

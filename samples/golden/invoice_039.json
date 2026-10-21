@@ -1,0 +1,76 @@
+{
+  "image": "invoice_039.jpg",
+  "template_id": "mono_receipt",
+  "difficulty": "photo",
+  "seed": 39,
+  "invoice": {
+    "document_no": "2025-4375",
+    "issue_date": "2025-11-03",
+    "supplier": {
+      "name": "(유) 시너지개발공사",
+      "business_number": "315-34-63144",
+      "representative": "이영호",
+      "address": "대전광역시 강남구 압구정거리 9 (지훈이동)"
+    },
+    "buyer": {
+      "name": "(유) 미래한가람기술",
+      "business_number": "127-25-36131",
+      "representative": "김성수",
+      "address": "서울특별시 관악구 백제고분가 968-37"
+    },
+    "items": [
+      {
+        "name": "배터리 AA",
+        "spec": "20개",
+        "quantity": 44,
+        "unit_price": 7800,
+        "amount": 343200
+      },
+      {
+        "name": "A4 복사용지 80g",
+        "spec": "500매",
+        "quantity": 24,
+        "unit_price": 4700,
+        "amount": 112800
+      },
+      {
+        "name": "멀티탭 3m",
+        "spec": "6구",
+        "quantity": 7,
+        "unit_price": 7100,
+        "amount": 49700
+      },
+      {
+        "name": "종이컵 6.5oz",
+        "spec": "1000개",
+        "quantity": 23,
+        "unit_price": 7700,
+        "amount": 177100
+      },
+      {
+        "name": "무선 마우스",
+        "spec": "1EA",
+        "quantity": 49,
+        "unit_price": 19800,
+        "amount": 970200
+      },
+      {
+        "name": "택배 박스 3호",
+        "spec": "50장",
+        "quantity": 26,
+        "unit_price": 17400,
+        "amount": 452400
+      },
+      {
+        "name": "노트북 거치대",
+        "spec": "1EA",
+        "quantity": 38,
+        "unit_price": 25100,
+        "amount": 953800
+      }
+    ],
+    "supply_amount": 3059200,
+    "tax_amount": 305920,
+    "total_amount": 3365120
+  }
+}

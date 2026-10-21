@@ -1,0 +1,90 @@
+{
+  "image": "invoice_036.jpg",
+  "template_id": "blue_stacked",
+  "difficulty": "photo",
+  "seed": 36,
+  "invoice": {
+    "document_no": "2026-9721",
+    "issue_date": "2026-05-19",
+    "supplier": {
+      "name": "(주) 가야발해기획",
+      "business_number": "437-08-03414",
+      "representative": "강상호",
+      "address": "전라남도 공주시 잠실9가 지하400 (유진이김읍)"
+    },
+    "buyer": {
+      "name": "유한회사 하나상사",
+      "business_number": "392-11-00069",
+      "representative": "김정자",
+      "address": "대구광역시 종로구 서초중앙3가 889 (채원서권면)"
+    },
+    "items": [
+      {
+        "name": "무선 마우스",
+        "spec": "1EA",
+        "quantity": 27,
+        "unit_price": 23700,
+        "amount": 639900
+      },
+      {
+        "name": "LED 형광등 20W",
+        "spec": "1EA",
+        "quantity": 25,
+        "unit_price": 5600,
+        "amount": 140000
+      },
+      {
+        "name": "멀티탭 3m",
+        "spec": "6구",
+        "quantity": 49,
+        "unit_price": 11400,
+        "amount": 558600
+      },
+      {
+        "name": "택배 박스 3호",
+        "spec": "50장",
+        "quantity": 16,
+        "unit_price": 25100,
+        "amount": 401600
+      },
+      {
+        "name": "종이컵 6.5oz",
+        "spec": "1000개",
+        "quantity": 11,
+        "unit_price": 7500,
+        "amount": 82500
+      },
+      {
+        "name": "스프레이 페인트",
+        "spec": "12통",
+        "quantity": 33,
+        "unit_price": 17100,
+        "amount": 564300
+      },
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 45,
+        "unit_price": 5000,
+        "amount": 225000
+      },
+      {
+        "name": "OPP 테이프 48mm",
+        "spec": "50롤",
+        "quantity": 34,
+        "unit_price": 23200,
+        "amount": 788800
+      },
+      {
+        "name": "볼펜 0.5mm 흑색",
+        "spec": "12자루",
+        "quantity": 12,
+        "unit_price": 3900,
+        "amount": 46800
+      }
+    ],
+    "supply_amount": 3447500,
+    "tax_amount": 344750,
+    "total_amount": 3792250
+  }
+}

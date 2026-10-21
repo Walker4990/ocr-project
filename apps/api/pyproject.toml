@@ -16,7 +16,10 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "faker>=40.43.0",
     "httpx>=0.28.1",
+    "numpy>=2.5.4",
+    "pillow>=13.0.0",
     "pyright>=1.1.414",
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
@@ -31,12 +34,15 @@ target-version = "py312"
 select = ["E", "F", "I", "UP", "B", "ASYNC"]
 
 [tool.pyright]
-include = ["app", "tests"]
+include = ["app", "tests", "../../samples"]
+exclude = ["../../samples/fonts", "**/.venv"]
+extraPaths = ["../../samples"]
 pythonVersion = "3.12"
 typeCheckingMode = "strict"
 venvPath = "."
 venv = ".venv"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "../../samples/tests"]
+pythonpath = [".", "../../samples"]
 asyncio_mode = "auto"

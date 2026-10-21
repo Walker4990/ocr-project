@@ -1,0 +1,41 @@
+{
+  "image": "invoice_027.png",
+  "template_id": "serif_simple",
+  "difficulty": "skewed",
+  "seed": 27,
+  "invoice": {
+    "document_no": "2025-4061",
+    "issue_date": "2025-07-07",
+    "supplier": {
+      "name": "유한회사 하나",
+      "business_number": "765-62-45418",
+      "representative": "이도현",
+      "address": "대전광역시 강북구 개포3길 748 (수민이리)"
+    },
+    "buyer": {
+      "name": "(주) 코어",
+      "business_number": "393-26-12112",
+      "representative": "이준혁",
+      "address": "전북특별자치도 광명시 백제고분382로 934 (은경박읍)"
+    },
+    "items": [
+      {
+        "name": "멀티탭 3m",
+        "spec": "6구",
+        "quantity": 17,
+        "unit_price": 11200,
+        "amount": 190400
+      },
+      {
+        "name": "스프레이 페인트",
+        "spec": "12통",
+        "quantity": 26,
+        "unit_price": 23500,
+        "amount": 611000
+      }
+    ],
+    "supply_amount": 801400,
+    "tax_amount": 80140,
+    "total_amount": 881540
+  }
+}

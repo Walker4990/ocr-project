@@ -1,0 +1,83 @@
+{
+  "image": "invoice_001.png",
+  "template_id": "blue_stacked",
+  "difficulty": "clean",
+  "seed": 1,
+  "invoice": {
+    "document_no": "2026-0151",
+    "issue_date": "2026-07-09",
+    "supplier": {
+      "name": "(주) 모두네트웍스",
+      "business_number": "238-73-10335",
+      "representative": "박재호",
+      "address": "강원특별자치도 정선군 개포가 713"
+    },
+    "buyer": {
+      "name": "(유) 한강마루네트워크",
+      "business_number": "362-16-81178",
+      "representative": "김경자",
+      "address": "울산광역시 서초구 선릉로 783"
+    },
+    "items": [
+      {
+        "name": "산업용 장갑",
+        "spec": "10켤레",
+        "quantity": 39,
+        "unit_price": 7700,
+        "amount": 300300
+      },
+      {
+        "name": "물티슈 캡형",
+        "spec": "100매",
+        "quantity": 50,
+        "unit_price": 2400,
+        "amount": 120000
+      },
+      {
+        "name": "USB 3.0 허브",
+        "spec": "4포트",
+        "quantity": 45,
+        "unit_price": 8000,
+        "amount": 360000
+      },
+      {
+        "name": "프린터 토너 카트리지",
+        "spec": "1EA",
+        "quantity": 18,
+        "unit_price": 90600,
+        "amount": 1630800
+      },
+      {
+        "name": "노트북 거치대",
+        "spec": "1EA",
+        "quantity": 38,
+        "unit_price": 17800,
+        "amount": 676400
+      },
+      {
+        "name": "A4 복사용지 80g",
+        "spec": "500매",
+        "quantity": 21,
+        "unit_price": 4800,
+        "amount": 100800
+      },
+      {
+        "name": "택배 박스 3호",
+        "spec": "50장",
+        "quantity": 2,
+        "unit_price": 15700,
+        "amount": 31400
+      },
+      {
+        "name": "스프레이 페인트",
+        "spec": "12통",
+        "quantity": 42,
+        "unit_price": 14600,
+        "amount": 613200
+      }
+    ],
+    "supply_amount": 3832900,
+    "tax_amount": 383290,
+    "total_amount": 4216190
+  }
+}

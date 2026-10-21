@@ -1,0 +1,34 @@
+{
+  "image": "invoice_031.jpg",
+  "template_id": "blue_stacked",
+  "difficulty": "low_res",
+  "seed": 31,
+  "invoice": {
+    "document_no": "2025-2288",
+    "issue_date": "2025-08-26",
+    "supplier": {
+      "name": "유한회사 글로벌은행",
+      "business_number": "113-61-18414",
+      "representative": "김진호",
+      "address": "충청북도 평택시 오금로 549"
+    },
+    "buyer": {
+      "name": "유한회사 유니온",
+      "business_number": "883-51-23074",
+      "representative": "지동현",
+      "address": "울산광역시 노원구 논현거리 612-32"
+    },
+    "items": [
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 35,
+        "unit_price": 3800,
+        "amount": 133000
+      }
+    ],
+    "supply_amount": 133000,
+    "tax_amount": 13300,
+    "total_amount": 146300
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "image": "invoice_018.jpg",
+  "template_id": "red_totals_top",
+  "difficulty": "photo",
+  "seed": 18,
+  "invoice": {
+    "document_no": "2025-8089",
+    "issue_date": "2025-07-26",
+    "supplier": {
+      "name": "(주) 코어정보통신",
+      "business_number": "286-16-73530",
+      "representative": "김영식",
+      "address": "충청북도 평창군 반포대34로 692 (지아노읍)"
+    },
+    "buyer": {
+      "name": "주식회사 다올연구소",
+      "business_number": "443-31-32436",
+      "representative": "김정순",
+      "address": "충청남도 보은군 강남대5가 551 (서현박류마을)"
+    },
+    "items": [
+      {
+        "name": "산업용 장갑",
+        "spec": "10켤레",
+        "quantity": 45,
+        "unit_price": 6600,
+        "amount": 297000
+      },
+      {
+        "name": "무선 마우스",
+        "spec": "1EA",
+        "quantity": 21,
+        "unit_price": 12000,
+        "amount": 252000
+      },
+      {
+        "name": "노트북 거치대",
+        "spec": "1EA",
+        "quantity": 44,
+        "unit_price": 25300,
+        "amount": 1113200
+      },
+      {
+        "name": "클리어 파일",
+        "spec": "20매",
+        "quantity": 12,
+        "unit_price": 4400,
+        "amount": 52800
+      },
+      {
+        "name": "OPP 테이프 48mm",
+        "spec": "50롤",
+        "quantity": 11,
+        "unit_price": 24000,
+        "amount": 264000
+      },
+      {
+        "name": "스프레이 페인트",
+        "spec": "12통",
+        "quantity": 13,
+        "unit_price": 20000,
+        "amount": 260000
+      },
+      {
+        "name": "포스트잇 76x76",
+        "spec": "12패드",
+        "quantity": 24,
+        "unit_price": 5800,
+        "amount": 139200
+      },
+      {
+        "name": "프린터 토너 카트리지",
+        "spec": "1EA",
+        "quantity": 33,
+        "unit_price": 103900,
+        "amount": 3428700
+      }
+    ],
+    "supply_amount": 5806900,
+    "tax_amount": 580690,
+    "total_amount": 6387590
+  }
+}
