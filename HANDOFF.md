@@ -26,7 +26,7 @@
 - 볼륨: `pgdata`, `uploads`, `logs`, `paddlex-cache`(OCR 모델 캐시, `/home/app/.paddlex`). 컨테이너 안 접속 주소(DATABASE_URL, REDIS_URL)는 compose가 서비스 이름으로 덮어쓴다
 - 이번에 만든 앱 진입점: `app/main.py`(FastAPI, `/health`)와 `app/worker.py`(arq, `ping` 작업). 둘 다 `app.ocr.engines`를 import해 OCR 엔진을 등록한다. arq는 등록된 함수가 없으면 시작하지 않아 `ping`을 뒀다. 실제 작업이 생기면 `ping`을 정리해도 된다
 - `.env.example`의 `OCR_ENGINE`이 `ppocrv5`였는데 레지스트리 이름은 `paddleocr`라 고쳤다. `OCR_USE_GPU`도 추가했다
-- 컨테이너 안 OCR 추론 확인함: 골든셋 `invoice_000`을 api 이미지에서 읽어 토큰 77개(호스트와 동일), 모델 로딩 약 17초, 인식 약 18초. 첫 실행은 모델을 내려받는다. 이미지는 paddle 때문에 크다. postgres는 아직 사용하는 코드가 없고, psycopg는 7번에서 추가한다
+- 컨테이너 안 OCR 추론 확인함: 골든셋 `invoice_000`을 api 이미지에서 읽어 토큰 77개(호스트와 동일), (paddlepaddle 3.2.2 적용 후 모델 로딩 3.4초, 인식 3.2초; 적용 전엔 17초와 18초). 첫 실행은 모델을 내려받는다. 이미지는 paddle 때문에 크다. postgres는 아직 사용하는 코드가 없고, psycopg는 7번에서 추가한다
 - postgres(5432)와 redis(6379) 포트는 `127.0.0.1`에만 연다(사용자 결정, 실제 바인딩 확인함). api·web 포트는 전체에 열려 있다
 - opencv 3종 중복(python/headless/contrib)은 사용자 결정으로 보류. 이미지 크기가 문제가 될 때 uv override로 정리를 검토한다
 - 컨테이너는 검증 후 `docker compose down`으로 내렸다(볼륨은 유지)
@@ -36,8 +36,8 @@
 - `apps/api/app/ocr/engines/paddleocr_adapter.py`, 테스트 `apps/api/tests/ocr/test_paddleocr_adapter.py`. `app.ocr.engines`를 import하면 `registry`에 `paddleocr`가 등록된다(`app/main.py`, `app/worker.py`가 시작 시 import한다). `create()` 때 모델을 로드하고, import만으로는 paddle을 import하지 않는다
 - 설치: `paddleocr 3.4.1` + `paddlepaddle 3.3.1` (uv add). PP-OCRv5 한국어는 3.x에서만 된다. opencv 패키지가 3종 깔려 있지만(python/headless/contrib) 동작에 문제는 없다
 - 환경변수 `OCR_USE_GPU`(1/true/on, 기본 CPU). 인식 모델은 `korean_PP-OCRv5_mobile_rec`, 검출 모델은 CPU면 `PP-OCRv5_mobile_det`, GPU면 `PP-OCRv5_server_det`. 모델은 첫 실행 때 `~/.paddlex`로 내려받는다
-- **함정 1 (oneDNN 버그)**: paddlepaddle 3.3 CPU는 기본 설정에서 `NotImplementedError: ConvertPirAttribute2RuntimeAttribute`를 낸다. `enable_mkldnn=False`로 우회했다
-- **함정 2 (속도)**: 2339x1654 한 장이 CPU에서 서버 검출 모델 약 190초, 모바일 검출 모델 약 21초다(인식 결과 동일). 검출 모델 이름만 바꾸면 인식 모델이 중국어로 돌아가 한글이 깨지므로 둘 다 지정해야 한다. 21초도 느리므로 벤치마크(태스크 이후)에서 이미지 축소, 스레드 수, 인식 단계 비중을 따져 본다
+- **함정 1 (paddlepaddle 버전)**: **paddlepaddle을 3.2.2로 고정했다.** 3.3.1 CPU는 oneDNN 경로에서 `NotImplementedError: ConvertPirAttribute2RuntimeAttribute`를 낸다. 처음엔 `enable_mkldnn=False`로 우회했는데, 그러면 CPU 가속이 꺼져 인식이 5배 이상 느렸다(아래). 3.3 이상으로 올리기 전에 oneDNN이 되는지 확인한다
+- **함정 2 (속도)**: 2339x1654 한 장이 CPU에서 서버 검출 모델 약 190초, 모바일 검출 모델 약 21초(oneDNN 끔)였다. 단계별로 재니 검출 2.7초, **인식 18초**(크롭 77개)로 인식이 병목이었고, 스레드 수·배치·입력 축소는 효과가 없었다. oneDNN을 켜니(paddlepaddle 3.2.2) 호스트 평균 **16.5초 → 5.0초**(중앙값 4.3, 최대 11.9), 컨테이너에서 인식 3.2초. 인식 텍스트는 50장 모두 이전과 완전히 동일하고 필드 일치도 1071개로 같다. 검출 모델 이름만 바꾸면 인식 모델이 중국어로 돌아가 한글이 깨지므로 둘 다 지정해야 한다
 - bbox는 4점 다각형의 바깥 사각형을 이미지 경계로 자른 값이고, 입력은 RGB를 BGR로 뒤집어 넘긴다. 빈 텍스트 토큰은 버린다
 - 느린 실제 모델 테스트는 `@pytest.mark.slow`다. 빠른 실행은 `uv run pytest -m "not slow"`
 - 골든셋 3장 육안 확인(수치 아님, CPU 모바일 검출): `invoice_000`(인쇄 77토큰, 평균 신뢰도 0.985, 21초), `invoice_002`(인쇄 59토큰, 0.983, 17초), `invoice_040`(손글씨 모사 59토큰, 0.961, 16초). 제목, 문서번호, 날짜, 상호, 사업자번호, 대표자, 주소 헤더부는 라벨과 일치하게 읽었다. 손글씨 모사본도 헤더부는 잘 읽었고 최저 신뢰도는 0.44(`-` 기호). 품목 표 이하는 눈으로 확인하지 않았다
@@ -46,8 +46,8 @@
   - 필드별: 대표자 100, 사업자번호 99, 품목 금액 99, 문서번호 98, 합계 98, 날짜 96, 상호 95, **품목명 87, 주소 58**
   - 주소·품목명이 낮은 이유(실패 사례를 몇 건 직접 본 것이고 전부 분석한 것은 아니다): 주소는 둘째 줄로 줄바꿈된 `(서현이읍)`·`지하146`이 별도 토큰이 되어 문자열이 끊긴 경우가 있고, `양천구`→`양전구` 같은 진짜 오인식도 있다. 품목명은 `6.5oz`를 `6.50z`(영문 o를 숫자 0)로 읽는 패턴이 반복된다. 손글씨 모사는 품목명 73%로 가장 약하다
   - 따라서 주소는 토큰 위치(bbox)로 줄을 합치는 후처리가 필요할 수 있다. 판단은 추출기 태스크에서 한다
-- **CPU 속도 실험** (invoice_000/040, 초): 기준 20.9/15.0, 스레드 6개 26.5/18.2, 스레드 12개 20.9/16.4, 인식 배치 16 20.5/16.0, 입력 1280 축소 19.2/15.2, oneDNN(PIR 끔)은 같은 NotImplementedError. 개선이 없어 어댑터 설정은 그대로다. 검출과 인식 중 무엇이 지배하는지(단계별 시간)는 아직 재지 않았다
-- 모델 로딩에 약 17초가 든다. 워커 시작 시 한 번만 로드하고 상주시켜야 한다(작업마다 로드하면 안 된다)
+- **CPU 속도 실험** (oneDNN 끈 상태, invoice_000/040, 초): 기준 20.9/15.0, 스레드 6개 26.5/18.2, 스레드 12개 20.9/16.4, 인식 배치 16 20.5/16.0, 입력 1280 축소 19.2/15.2로 모두 효과 없었다. 원인은 oneDNN을 꺼 둔 것이었고 paddlepaddle 3.2.2로 해결했다(위 함정 2). 위 3장 수치와 50장 측정의 시간(16.5초)은 해결 전 값이다. 정확도 수치는 해결 후에도 같다
+- 모델 로딩은 처음엔 약 17초였고 캐시가 있는 컨테이너에서는 3.4초였다. 그래도 워커 시작 시 한 번만 로드하고 상주시켜야 한다(작업마다 로드하면 안 된다)
 
 ## 골든셋 (태스크 6 산출물)
 

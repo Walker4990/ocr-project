@@ -50,8 +50,8 @@ def build_paddleocr(use_gpu: bool) -> PaddlePredictor:
         text_det_limit_type="max",
         text_det_limit_side_len=1600,
         device="gpu" if use_gpu else "cpu",
-        # paddlepaddle 3.3 CPU의 oneDNN 실행기가 PIR 모델에서 NotImplementedError를 낸다
-        enable_mkldnn=False,
+        # oneDNN(기본값)이 인식 단계를 크게 줄인다. paddlepaddle 3.3은 이 경로에서
+        # NotImplementedError가 나서 pyproject에서 3.2.2로 고정했다. 올리기 전에 확인할 것
         use_doc_orientation_classify=False,
         use_doc_unwarping=False,
         use_textline_orientation=False,
