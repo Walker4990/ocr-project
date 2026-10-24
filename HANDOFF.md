@@ -3,12 +3,22 @@
 `/clear` 후 이어서 작업할 때 가장 먼저 읽는다. 전체 계획은 `ROADMAP.md`, 태스크 상세는 `task-master show <id>`.
 이 파일은 진행 상황이 바뀔 때마다 갱신한다.
 
-## 현재 상태 (태스크 6 완료 직후)
+## 현재 상태 (태스크 8 완료 직후)
 
-- 완료: 태스크 1 (모노레포 및 개발 환경), 태스크 6 (합성 거래명세서 골든셋 생성기, 서브태스크 6.1~6.5)
-- 다음: **태스크 9 (PaddleOCR 어댑터, 크리티컬 패스 다음 칸)**. 병렬로 2번(Docker), 3번, 4번, 8번, 10번도 가능하다. 9번은 시작 시 점수를 확인해 7 이상이면 `--num=5`로 분해한다
+- 완료: 태스크 1 (모노레포 및 개발 환경), 6 (골든셋 생성기), 8 (OcrEngine Protocol)
+- 다음: **태스크 9 (PaddleOCR v5 한국어 어댑터, 크리티컬 패스)**. 선행인 8, 6이 모두 끝났다. 복잡도 6이라 서브태스크로 분해하지 않는다(분해 기준은 7 이상). 병렬로 2번(Docker), 3번, 4번, 10번도 가능하다
 - 저장소는 독립 git이고 원격은 아직 없다
-- 검증 상태: `pytest` 402건, `ruff`, `pyright`(strict), `npm run test` 2건, `tsc`(apps/web에서 실행), `lint` 모두 통과
+- 검증 상태: `pytest` 1084건, `ruff`, `pyright`(strict), `npm run test` 2건, `tsc`(apps/web에서 실행), `lint` 모두 통과
+- 의존성 순서를 먼저 확인한다: 태스크를 고르기 전에 `task-master show <id>`의 Dependencies가 모두 done인지 본다 (이번에 9번이 8번에 의존하는 것을 놓쳐 인계 메모가 틀렸었다)
+
+## OCR 인터페이스 (태스크 8 산출물)
+
+- `apps/api/app/ocr/engine.py`: `OcrEngine` Protocol(`name`, `supports_gpu`, `recognize(image) -> OcrPage`), `OcrToken`(text, bbox, confidence), `OcrPage`(width, height, tokens, `text`), `EngineRegistry`, 모듈 전역 `registry`
+- bbox는 `(x_min, y_min, x_max, y_max)` 원본 이미지 픽셀 좌표다. PaddleOCR의 4점 다각형은 어댑터에서 바깥 사각형으로 바꾼다. confidence는 0~1, bbox 좌표가 뒤집히면 `ValueError`
+- 입력 이미지는 RGB `NDArray[np.uint8]`(높이 x 너비 x 3)다
+- 엔진 선택: 이름 인자 > 환경변수 `OCR_ENGINE` > 기본 `paddleocr` 순이다. 모르는 이름은 `UnknownOcrEngineError`(등록된 엔진 목록 포함)
+- **9번에서 할 일**: PaddleOCR 어댑터 모듈이 import될 때 `registry.register("paddleocr", 팩토리)`로 자신을 등록한다. 팩토리는 `create()` 때 모델을 로드하므로 import만으로는 무거운 로딩이 일어나지 않게 한다. 어디서 어댑터 모듈을 import해 등록할지(앱 시작 시점)도 9번에서 정한다
+- numpy는 런타임 의존성이다(dev에서 옮겼다). Pillow, Faker는 여전히 dev 의존성이다. 9번에서 이미지를 읽을 때 Pillow가 런타임에 필요하면 옮긴다
 
 ## 골든셋 (태스크 6 산출물)
 

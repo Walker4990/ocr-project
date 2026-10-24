@@ -195,11 +195,12 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 3,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "OcrEngine Protocol을 다음으로 세분화: 1) OcrPage, OcrToken 데이터 클래스 정의, 2) OcrEngine Protocol 정의(recognize, name, supports_gpu), 3) 엔진 등록 메커니즘 구현(레지스트리 패턴), 4) 환경변수 기반 엔진 선택 로직, 5) 더미 엔진 구현 및 인터페이스 검증 테스트"
+        "expansionPrompt": "OcrEngine Protocol을 다음으로 세분화: 1) OcrPage, OcrToken 데이터 클래스 정의, 2) OcrEngine Protocol 정의(recognize, name, supports_gpu), 3) 엔진 등록 메커니즘 구현(레지스트리 패턴), 4) 환경변수 기반 엔진 선택 로직, 5) 더미 엔진 구현 및 인터페이스 검증 테스트",
+        "updatedAt": "2026-10-24T06:59:46.637Z"
       },
       {
         "id": "9",
@@ -616,9 +617,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-21T14:19:41.915Z",
+      "lastModified": "2026-10-24T06:59:46.638Z",
       "taskCount": 32,
-      "completedCount": 2,
+      "completedCount": 3,
       "tags": [
         "master"
       ]
