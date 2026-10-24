@@ -1,0 +1,108 @@
+# 실행: 루트의 .env.example을 복사해 로컬 설정 파일을 만들고 POSTGRES_PASSWORD를 채운 뒤 `docker compose up --build`
+name: doculens
+
+x-api-common: &api-common
+  build:
+    context: ./apps/api
+  env_file:
+    - path: .env
+      required: false
+  environment: &api-env
+    # 컨테이너 안에서는 localhost가 아니라 서비스 이름으로 접속한다
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-doculens}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD가 필요하다 (.env.example 참고)}@postgres:5432/${POSTGRES_DB:-doculens}
+    REDIS_URL: redis://redis:6379/0
+    UPLOAD_DIR: /app/data/uploads
+  volumes:
+    - uploads:/app/data/uploads
+    - logs:/app/logs
+    - paddlex-cache:/home/app/.paddlex # OCR 모델 캐시. 없으면 재시작마다 다시 내려받는다
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  restart: unless-stopped
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-doculens}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD가 필요하다 (.env.example 참고)}
+      POSTGRES_DB: ${POSTGRES_DB:-doculens}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  api:
+    <<: *api-common
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  worker:
+    <<: *api-common
+    command: ["arq", "app.worker.WorkerSettings"]
+    healthcheck:
+      test: ["CMD", "arq", "app.worker.WorkerSettings", "--check"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        # 브라우저가 호출하는 주소이므로 호스트에서 본 포트를 쓴다
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://localhost:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  uploads:
+  logs:
+  paddlex-cache:

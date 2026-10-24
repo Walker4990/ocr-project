@@ -26,11 +26,12 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 5,
         "recommendedSubtasks": 7,
-        "expansionPrompt": "Docker 인프라 구성을 다음으로 세분화: 1) docker-compose.yml 기본 구조 및 네트워크 설정, 2) PostgreSQL 서비스 설정(볼륨, 환경변수), 3) Redis 서비스 설정, 4) FastAPI용 Dockerfile 및 api 서비스 설정, 5) arq 워커 서비스 설정, 6) Next.js용 Dockerfile 및 web 서비스 설정, 7) 헬스체크 및 전체 스택 통합 테스트"
+        "expansionPrompt": "Docker 인프라 구성을 다음으로 세분화: 1) docker-compose.yml 기본 구조 및 네트워크 설정, 2) PostgreSQL 서비스 설정(볼륨, 환경변수), 3) Redis 서비스 설정, 4) FastAPI용 Dockerfile 및 api 서비스 설정, 5) arq 워커 서비스 설정, 6) Next.js용 Dockerfile 및 web 서비스 설정, 7) 헬스체크 및 전체 스택 통합 테스트",
+        "updatedAt": "2026-10-24T07:47:51.599Z"
       },
       {
         "id": "3",
@@ -618,9 +619,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-24T07:31:58.003Z",
+      "lastModified": "2026-10-24T07:47:51.599Z",
       "taskCount": 32,
-      "completedCount": 4,
+      "completedCount": 5,
       "tags": [
         "master"
       ]

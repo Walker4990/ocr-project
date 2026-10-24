@@ -1,0 +1,8 @@
+**/node_modules
+**/.next
+.git
+.taskmaster
+.claude
+samples
+apps/api
+apps/web/__tests__

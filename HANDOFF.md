@@ -3,12 +3,12 @@
 `/clear` 후 이어서 작업할 때 가장 먼저 읽는다. 전체 계획은 `ROADMAP.md`, 태스크 상세는 `task-master show <id>`.
 이 파일은 진행 상황이 바뀔 때마다 갱신한다.
 
-## 현재 상태 (태스크 9 완료 직후)
+## 현재 상태 (태스크 2 완료 직후)
 
-- 완료: 태스크 1 (모노레포 및 개발 환경), 6 (골든셋 생성기), 8 (OcrEngine Protocol), 9 (PaddleOCR 어댑터)
-- 다음: `task-master next`로 확인한다. 9번에 의존하는 태스크가 풀렸을 것이다. 병렬로 2번(Docker), 3번, 4번, 10번도 가능하다
+- 완료: 태스크 1 (모노레포 및 개발 환경), 2 (Docker Compose), 6 (골든셋 생성기), 8 (OcrEngine Protocol), 9 (PaddleOCR 어댑터)
+- 다음: `task-master next`로 확인한다. 병렬로 3번, 4번, 10번도 가능하다
 - 저장소는 독립 git이고 원격은 아직 없다
-- 검증 상태: `pytest` 1101건(slow 1건 포함), `ruff`, `pyright`(strict) 통과. 웹(`npm run test`, `tsc`, `lint`)은 이번에 건드리지 않았다
+- 검증 상태: `pytest` 1105건(slow 1건 포함, 2번에서 4건 추가), `ruff`, `pyright`(strict) 통과. 웹(`npm run test`, `tsc`, `lint`)은 이번에 건드리지 않았다
 - 의존성 순서를 먼저 확인한다: 태스크를 고르기 전에 `task-master show <id>`의 Dependencies가 모두 done인지 본다 (이번에 9번이 8번에 의존하는 것을 놓쳐 인계 메모가 틀렸었다)
 
 ## OCR 인터페이스 (태스크 8 산출물)
@@ -19,9 +19,19 @@
 - 엔진 선택: 이름 인자 > 환경변수 `OCR_ENGINE` > 기본 `paddleocr` 순이다. 모르는 이름은 `UnknownOcrEngineError`(등록된 엔진 목록 포함)
 - numpy는 런타임 의존성이다(dev에서 옮겼다). Pillow, Faker는 여전히 dev 의존성이다. 업로드 이미지를 디코딩하는 단계(10번 부근)에서 Pillow가 런타임에 필요하면 옮긴다
 
+## Docker Compose (태스크 2 산출물)
+
+- 루트 `docker-compose.yml`: postgres 16, redis 7, api(8000), worker(arq), web(3000). 모든 서비스에 헬스체크가 있고 5개 모두 healthy 확인했다. 실행은 `.env.example`을 복사해 만든 로컬 설정 파일에 `POSTGRES_PASSWORD`를 채운 뒤 `docker compose up --build`
+- api와 worker는 `apps/api/Dockerfile` 이미지를 공유한다(command만 다름). web은 `apps/web/Dockerfile`이고 **빌드 컨텍스트가 저장소 루트**다(workspaces의 lock 파일 때문). `NEXT_PUBLIC_API_URL`은 빌드 때 박히므로 바꾸면 web을 다시 빌드한다
+- 볼륨: `pgdata`, `uploads`, `logs`, `paddlex-cache`(OCR 모델 캐시, `/home/app/.paddlex`). 컨테이너 안 접속 주소(DATABASE_URL, REDIS_URL)는 compose가 서비스 이름으로 덮어쓴다
+- 이번에 만든 앱 진입점: `app/main.py`(FastAPI, `/health`)와 `app/worker.py`(arq, `ping` 작업). 둘 다 `app.ocr.engines`를 import해 OCR 엔진을 등록한다. arq는 등록된 함수가 없으면 시작하지 않아 `ping`을 뒀다. 실제 작업이 생기면 `ping`을 정리해도 된다
+- `.env.example`의 `OCR_ENGINE`이 `ppocrv5`였는데 레지스트리 이름은 `paddleocr`라 고쳤다. `OCR_USE_GPU`도 추가했다
+- **미검증**: 컨테이너 안에서 실제 OCR 추론(모델 다운로드 포함)은 돌려 보지 않았다. paddle이 컨테이너에서 동작하는지는 OCR을 API에 연결하는 태스크에서 확인한다. 이미지가 크다(paddle 포함). postgres는 아직 사용하는 코드가 없고, psycopg는 7번에서 추가한다
+- 컨테이너는 검증 후 `docker compose down`으로 내렸다(볼륨은 유지)
+
 ## PaddleOCR 어댑터 (태스크 9 산출물)
 
-- `apps/api/app/ocr/engines/paddleocr_adapter.py`, 테스트 `apps/api/tests/ocr/test_paddleocr_adapter.py`. `app.ocr.engines`를 import하면 `registry`에 `paddleocr`가 등록된다. **앱 시작 시점에 `import app.ocr.engines`를 한 번 해야 한다** (아직 앱 진입점이 없어 연결하지 않았다). `create()` 때 모델을 로드하고, import만으로는 paddle을 import하지 않는다
+- `apps/api/app/ocr/engines/paddleocr_adapter.py`, 테스트 `apps/api/tests/ocr/test_paddleocr_adapter.py`. `app.ocr.engines`를 import하면 `registry`에 `paddleocr`가 등록된다(`app/main.py`, `app/worker.py`가 시작 시 import한다). `create()` 때 모델을 로드하고, import만으로는 paddle을 import하지 않는다
 - 설치: `paddleocr 3.4.1` + `paddlepaddle 3.3.1` (uv add). PP-OCRv5 한국어는 3.x에서만 된다. opencv 패키지가 3종 깔려 있지만(python/headless/contrib) 동작에 문제는 없다
 - 환경변수 `OCR_USE_GPU`(1/true/on, 기본 CPU). 인식 모델은 `korean_PP-OCRv5_mobile_rec`, 검출 모델은 CPU면 `PP-OCRv5_mobile_det`, GPU면 `PP-OCRv5_server_det`. 모델은 첫 실행 때 `~/.paddlex`로 내려받는다
 - **함정 1 (oneDNN 버그)**: paddlepaddle 3.3 CPU는 기본 설정에서 `NotImplementedError: ConvertPirAttribute2RuntimeAttribute`를 낸다. `enable_mkldnn=False`로 우회했다
