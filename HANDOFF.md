@@ -3,12 +3,12 @@
 `/clear` 후 이어서 작업할 때 가장 먼저 읽는다. 전체 계획은 `ROADMAP.md`, 태스크 상세는 `task-master show <id>`.
 이 파일은 진행 상황이 바뀔 때마다 갱신한다.
 
-## 현재 상태 (태스크 8 완료 직후)
+## 현재 상태 (태스크 9 완료 직후)
 
-- 완료: 태스크 1 (모노레포 및 개발 환경), 6 (골든셋 생성기), 8 (OcrEngine Protocol)
-- 다음: **태스크 9 (PaddleOCR v5 한국어 어댑터, 크리티컬 패스)**. 선행인 8, 6이 모두 끝났다. 복잡도 6이라 서브태스크로 분해하지 않는다(분해 기준은 7 이상). 병렬로 2번(Docker), 3번, 4번, 10번도 가능하다
+- 완료: 태스크 1 (모노레포 및 개발 환경), 6 (골든셋 생성기), 8 (OcrEngine Protocol), 9 (PaddleOCR 어댑터)
+- 다음: `task-master next`로 확인한다. 9번에 의존하는 태스크가 풀렸을 것이다. 병렬로 2번(Docker), 3번, 4번, 10번도 가능하다
 - 저장소는 독립 git이고 원격은 아직 없다
-- 검증 상태: `pytest` 1084건, `ruff`, `pyright`(strict), `npm run test` 2건, `tsc`(apps/web에서 실행), `lint` 모두 통과
+- 검증 상태: `pytest` 1101건(slow 1건 포함), `ruff`, `pyright`(strict) 통과. 웹(`npm run test`, `tsc`, `lint`)은 이번에 건드리지 않았다
 - 의존성 순서를 먼저 확인한다: 태스크를 고르기 전에 `task-master show <id>`의 Dependencies가 모두 done인지 본다 (이번에 9번이 8번에 의존하는 것을 놓쳐 인계 메모가 틀렸었다)
 
 ## OCR 인터페이스 (태스크 8 산출물)
@@ -17,8 +17,18 @@
 - bbox는 `(x_min, y_min, x_max, y_max)` 원본 이미지 픽셀 좌표다. PaddleOCR의 4점 다각형은 어댑터에서 바깥 사각형으로 바꾼다. confidence는 0~1, bbox 좌표가 뒤집히면 `ValueError`
 - 입력 이미지는 RGB `NDArray[np.uint8]`(높이 x 너비 x 3)다
 - 엔진 선택: 이름 인자 > 환경변수 `OCR_ENGINE` > 기본 `paddleocr` 순이다. 모르는 이름은 `UnknownOcrEngineError`(등록된 엔진 목록 포함)
-- **9번에서 할 일**: PaddleOCR 어댑터 모듈이 import될 때 `registry.register("paddleocr", 팩토리)`로 자신을 등록한다. 팩토리는 `create()` 때 모델을 로드하므로 import만으로는 무거운 로딩이 일어나지 않게 한다. 어디서 어댑터 모듈을 import해 등록할지(앱 시작 시점)도 9번에서 정한다
-- numpy는 런타임 의존성이다(dev에서 옮겼다). Pillow, Faker는 여전히 dev 의존성이다. 9번에서 이미지를 읽을 때 Pillow가 런타임에 필요하면 옮긴다
+- numpy는 런타임 의존성이다(dev에서 옮겼다). Pillow, Faker는 여전히 dev 의존성이다. 업로드 이미지를 디코딩하는 단계(10번 부근)에서 Pillow가 런타임에 필요하면 옮긴다
+
+## PaddleOCR 어댑터 (태스크 9 산출물)
+
+- `apps/api/app/ocr/engines/paddleocr_adapter.py`, 테스트 `apps/api/tests/ocr/test_paddleocr_adapter.py`. `app.ocr.engines`를 import하면 `registry`에 `paddleocr`가 등록된다. **앱 시작 시점에 `import app.ocr.engines`를 한 번 해야 한다** (아직 앱 진입점이 없어 연결하지 않았다). `create()` 때 모델을 로드하고, import만으로는 paddle을 import하지 않는다
+- 설치: `paddleocr 3.4.1` + `paddlepaddle 3.3.1` (uv add). PP-OCRv5 한국어는 3.x에서만 된다. opencv 패키지가 3종 깔려 있지만(python/headless/contrib) 동작에 문제는 없다
+- 환경변수 `OCR_USE_GPU`(1/true/on, 기본 CPU). 인식 모델은 `korean_PP-OCRv5_mobile_rec`, 검출 모델은 CPU면 `PP-OCRv5_mobile_det`, GPU면 `PP-OCRv5_server_det`. 모델은 첫 실행 때 `~/.paddlex`로 내려받는다
+- **함정 1 (oneDNN 버그)**: paddlepaddle 3.3 CPU는 기본 설정에서 `NotImplementedError: ConvertPirAttribute2RuntimeAttribute`를 낸다. `enable_mkldnn=False`로 우회했다
+- **함정 2 (속도)**: 2339x1654 한 장이 CPU에서 서버 검출 모델 약 190초, 모바일 검출 모델 약 21초다(인식 결과 동일). 검출 모델 이름만 바꾸면 인식 모델이 중국어로 돌아가 한글이 깨지므로 둘 다 지정해야 한다. 21초도 느리므로 벤치마크(태스크 이후)에서 이미지 축소, 스레드 수, 인식 단계 비중을 따져 본다
+- bbox는 4점 다각형의 바깥 사각형을 이미지 경계로 자른 값이고, 입력은 RGB를 BGR로 뒤집어 넘긴다. 빈 텍스트 토큰은 버린다
+- 느린 실제 모델 테스트는 `@pytest.mark.slow`다. 빠른 실행은 `uv run pytest -m "not slow"`
+- 골든셋 3장 맛보기: 인쇄체 clean은 제목, 문서번호, 상호 등을 정확히 읽었다. 정확도 수치는 아직 없다(벤치마크 태스크에서)
 
 ## 골든셋 (태스크 6 산출물)
 

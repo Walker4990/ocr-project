@@ -213,11 +213,12 @@
           "8",
           "6"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 6,
         "recommendedSubtasks": 7,
-        "expansionPrompt": "PaddleOCR 어댑터를 다음으로 세분화: 1) PaddleOCR 초기화 로직 작성(한국어 모델, GPU 설정), 2) recognize 메서드 구현(이미지 입력 처리), 3) PaddleOCR 출력을 OcrPage로 변환하는 로직, 4) 처리시간 측정 및 로깅, 5) TDD: 실패하는 테스트 작성(샘플 이미지 인식), 6) 테스트 통과를 위한 구현, 7) 토큰 개수 및 신뢰도 범위 검증 테스트"
+        "expansionPrompt": "PaddleOCR 어댑터를 다음으로 세분화: 1) PaddleOCR 초기화 로직 작성(한국어 모델, GPU 설정), 2) recognize 메서드 구현(이미지 입력 처리), 3) PaddleOCR 출력을 OcrPage로 변환하는 로직, 4) 처리시간 측정 및 로깅, 5) TDD: 실패하는 테스트 작성(샘플 이미지 인식), 6) 테스트 통과를 위한 구현, 7) 토큰 개수 및 신뢰도 범위 검증 테스트",
+        "updatedAt": "2026-10-24T07:31:58.002Z"
       },
       {
         "id": "10",
@@ -617,9 +618,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-24T06:59:46.638Z",
+      "lastModified": "2026-10-24T07:31:58.003Z",
       "taskCount": 32,
-      "completedCount": 3,
+      "completedCount": 4,
       "tags": [
         "master"
       ]
