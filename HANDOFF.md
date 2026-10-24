@@ -8,7 +8,7 @@
 - 완료: 태스크 1 (모노레포 및 개발 환경), 2 (Docker Compose), 6 (골든셋 생성기), 8 (OcrEngine Protocol), 9 (PaddleOCR 어댑터)
 - 다음: `task-master next`로 확인한다. 병렬로 3번, 4번, 10번도 가능하다
 - 저장소는 독립 git이고 원격은 아직 없다
-- 검증 상태: `pytest` 1105건(slow 1건 포함, 2번에서 4건 추가), `ruff`, `pyright`(strict) 통과. 웹(`npm run test`, `tsc`, `lint`)은 이번에 건드리지 않았다
+- 검증 상태: `pytest` 1105건(slow 1건 포함, 2번에서 4건 추가), `ruff`, `pyright`(strict) 통과. 웹 `npm run test` 2건, `tsc`, `lint`도 통과(2번 작업 직후 확인)
 - 의존성 순서를 먼저 확인한다: 태스크를 고르기 전에 `task-master show <id>`의 Dependencies가 모두 done인지 본다 (이번에 9번이 8번에 의존하는 것을 놓쳐 인계 메모가 틀렸었다)
 
 ## OCR 인터페이스 (태스크 8 산출물)
@@ -26,7 +26,7 @@
 - 볼륨: `pgdata`, `uploads`, `logs`, `paddlex-cache`(OCR 모델 캐시, `/home/app/.paddlex`). 컨테이너 안 접속 주소(DATABASE_URL, REDIS_URL)는 compose가 서비스 이름으로 덮어쓴다
 - 이번에 만든 앱 진입점: `app/main.py`(FastAPI, `/health`)와 `app/worker.py`(arq, `ping` 작업). 둘 다 `app.ocr.engines`를 import해 OCR 엔진을 등록한다. arq는 등록된 함수가 없으면 시작하지 않아 `ping`을 뒀다. 실제 작업이 생기면 `ping`을 정리해도 된다
 - `.env.example`의 `OCR_ENGINE`이 `ppocrv5`였는데 레지스트리 이름은 `paddleocr`라 고쳤다. `OCR_USE_GPU`도 추가했다
-- **미검증**: 컨테이너 안에서 실제 OCR 추론(모델 다운로드 포함)은 돌려 보지 않았다. paddle이 컨테이너에서 동작하는지는 OCR을 API에 연결하는 태스크에서 확인한다. 이미지가 크다(paddle 포함). postgres는 아직 사용하는 코드가 없고, psycopg는 7번에서 추가한다
+- 컨테이너 안 OCR 추론 확인함: 골든셋 `invoice_000`을 api 이미지에서 읽어 토큰 77개(호스트와 동일), 모델 로딩 약 17초, 인식 약 18초. 첫 실행은 모델을 내려받는다. 이미지는 paddle 때문에 크다. postgres는 아직 사용하는 코드가 없고, psycopg는 7번에서 추가한다
 - 컨테이너는 검증 후 `docker compose down`으로 내렸다(볼륨은 유지)
 
 ## PaddleOCR 어댑터 (태스크 9 산출물)
