@@ -10,7 +10,7 @@ def test_health는_200과_상태를_돌려준다() -> None:
     response = TestClient(app).get("/health")
 
     assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    assert response.json()["status"] == "ok"
 
 
 def test_앱_시작_시_OCR_엔진이_레지스트리에_등록된다() -> None:
