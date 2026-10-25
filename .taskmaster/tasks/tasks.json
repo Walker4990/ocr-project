@@ -80,11 +80,12 @@
           "3",
           "4"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 5,
         "recommendedSubtasks": 6,
-        "expansionPrompt": "CI 파이프라인을 다음으로 세분화: 1) 워크플로우 파일 구조 및 트리거 설정, 2) 백엔드 잡 구성(uv sync, pytest, 코드 커버리지), 3) 백엔드 린트/타입 체크 잡(ruff, mypy/pyright), 4) 프론트엔드 잡 구성(npm ci, test, tsc, lint), 5) Docker 이미지 빌드 테스트 잡, 6) 캐싱 최적화 및 병렬 실행 설정"
+        "expansionPrompt": "CI 파이프라인을 다음으로 세분화: 1) 워크플로우 파일 구조 및 트리거 설정, 2) 백엔드 잡 구성(uv sync, pytest, 코드 커버리지), 3) 백엔드 린트/타입 체크 잡(ruff, mypy/pyright), 4) 프론트엔드 잡 구성(npm ci, test, tsc, lint), 5) Docker 이미지 빌드 테스트 잡, 6) 캐싱 최적화 및 병렬 실행 설정",
+        "updatedAt": "2026-10-25T08:48:37.517Z"
       },
       {
         "id": "6",
@@ -268,11 +269,12 @@
         "dependencies": [
           "8"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 3,
         "recommendedSubtasks": 4,
-        "expansionPrompt": "Tesseract 어댑터를 다음으로 세분화: 1) pytesseract 설치 및 한국어 언어팩 설정, 2) recognize 메서드 구현, 3) Tesseract 출력을 OcrPage로 변환, 4) 처리시간 측정 및 PaddleOCR와 비교 테스트"
+        "expansionPrompt": "Tesseract 어댑터를 다음으로 세분화: 1) pytesseract 설치 및 한국어 언어팩 설정, 2) recognize 메서드 구현, 3) Tesseract 출력을 OcrPage로 변환, 4) 처리시간 측정 및 PaddleOCR와 비교 테스트",
+        "updatedAt": "2026-10-25T08:48:23.528Z"
       },
       {
         "id": "13",
@@ -625,9 +627,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-25T08:29:53.032Z",
+      "lastModified": "2026-10-25T08:48:37.518Z",
       "taskCount": 32,
-      "completedCount": 11,
+      "completedCount": 13,
       "tags": [
         "master"
       ]
