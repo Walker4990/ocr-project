@@ -10,6 +10,7 @@ dependencies = [
     "numpy>=2.5.4",
     "paddleocr>=3",
     "paddlepaddle==3.2.2",
+    "paddlex[ocr]==3.4.3",
     "pillow>=13.0.0",
     "pydantic>=2",
     "pydantic-settings>=2.16.1",
