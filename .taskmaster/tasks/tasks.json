@@ -322,11 +322,12 @@
           "11",
           "6"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 6,
         "recommendedSubtasks": 8,
-        "expansionPrompt": "헤더 필드 추출기를 다음으로 세분화: 1) 키워드 매칭 로직 구현(발행일, 문서번호 등), 2) 정규식 패턴 정의(날짜, 사업자등록번호), 3) 신뢰도 계산 로직(키워드 거리, OCR 신뢰도), 4) Pydantic 스키마 정의(HeaderFields), 5) 추출 함수 구현, 6) TDD: 샘플 문서로 테스트 작성, 7) 테스트 통과를 위한 구현, 8) 정답 라벨 대비 필드별 정확도 검증"
+        "expansionPrompt": "헤더 필드 추출기를 다음으로 세분화: 1) 키워드 매칭 로직 구현(발행일, 문서번호 등), 2) 정규식 패턴 정의(날짜, 사업자등록번호), 3) 신뢰도 계산 로직(키워드 거리, OCR 신뢰도), 4) Pydantic 스키마 정의(HeaderFields), 5) 추출 함수 구현, 6) TDD: 샘플 문서로 테스트 작성, 7) 테스트 통과를 위한 구현, 8) 정답 라벨 대비 필드별 정확도 검증",
+        "updatedAt": "2026-10-25T08:29:53.031Z"
       },
       {
         "id": "16",
@@ -624,9 +625,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-25T07:59:11.323Z",
+      "lastModified": "2026-10-25T08:29:53.032Z",
       "taskCount": 32,
-      "completedCount": 10,
+      "completedCount": 11,
       "tags": [
         "master"
       ]
