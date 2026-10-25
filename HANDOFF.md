@@ -7,7 +7,7 @@
 
 - 완료: 태스크 1 (모노레포 및 개발 환경), 2 (Docker Compose), 3 (FastAPI 골격), 4 (Next.js 구조), 6 (골든셋 생성기), 8 (OcrEngine Protocol), 9 (PaddleOCR 어댑터), 10 (전처리), 11 (표 구조 인식)
 - 다음: `task-master next`로 확인한다. 의존성은 `task-master show <id>`로 먼저 본다
-- 저장소는 독립 git이고 원격은 아직 없다
+- 원격: `origin` = https://github.com/Walker4990/ocr-project (**public**, 사용자 결정). `main`을 push했고 추적 설정됨. 공개 저장소이니 `.mcp.json`에 실제 키를 넣지 않고, 커밋에 개인정보가 들어가지 않게 한다
 - 검증 상태: `pytest -m "not slow"` 1175건, `ruff`, `pyright`(strict) 통과. 웹 `npm run test` 16건, `tsc`, `lint` 통과(3·4·10번 병합 후 확인). 3·4·10번은 서브에이전트 3개가 worktree에서 병렬로 구현해 병합했고 worktree는 정리했다
 - 병합 후 docker compose에서 api 헬스체크가 새 `/health`로 통과하는지는 아직 돌려 보지 않았다 (로직상 DB는 psycopg가 없어 skipped, Redis는 ok라 200이어야 한다)
 - 의존성 순서를 먼저 확인한다: 태스크를 고르기 전에 `task-master show <id>`의 Dependencies가 모두 done인지 본다 (이번에 9번이 8번에 의존하는 것을 놓쳐 인계 메모가 틀렸었다)
@@ -154,4 +154,3 @@
 | 14번 이후 | 표 인식이 충분한지, LLM 폴백 비중 | 벤치마크 결과로 판단 |
 | 11번 이후 | 선 없는 표(mono_receipt)·페이지 전체 표(red_totals_top) 대응으로 토큰 bbox 군집화를 병행할지, 기본 `max_tables`를 1로 둘지 | 11번 간이 측정상 표 모델 단독은 2개 양식에서 쓸 수 없고 나머지도 일부 어긋나며(표본 적음) 느리다. 군집화 병행을 권한다. 벤치마크 태스크에서 판단 |
 | P4 후반 | 데모 배포 대상 | 미정. 30번 착수 전 제안 |
-| 시점 미정 | GitHub 원격 저장소 생성과 공개 범위 | 사용자 확인 필요 |
