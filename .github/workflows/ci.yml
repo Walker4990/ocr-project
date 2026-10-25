@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# 같은 ref에서 새 실행이 시작되면 이전 실행을 취소한다
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# 공개 저장소와 포크 PR에서도 안전하도록 읽기 권한만 쓰고 시크릿은 쓰지 않는다
+permissions:
+  contents: read
+
+jobs:
+  api:
+    name: 백엔드 (ruff, pyright, pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@v4
+
+      # opencv가 요구하는 공유 라이브러리 (Dockerfile과 동일)
+      - name: 시스템 라이브러리 설치
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgl1 libglib2.0-0 libgomp1
+        working-directory: .
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.13.4"
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+          python-version-file: apps/api/.python-version
+
+      # 잠금 파일을 바꾸지 않도록 --frozen을 쓴다 (dev 의존성 포함)
+      - name: 의존성 설치
+        run: uv sync --frozen
+
+      # 골든셋 생성기 테스트에 필요한 폰트 (samples/fonts/는 gitignore)
+      - name: 골든셋 폰트 내려받기
+        run: uv run python ../../samples/fetch_fonts.py
+
+      - name: ruff
+        run: uv run ruff check .
+
+      - name: pyright
+        run: uv run pyright
+
+      # slow 마커는 실제 PaddleOCR 모델을 내려받으므로 제외한다. samples/tests도 함께 돈다
+      - name: pytest
+        run: uv run pytest -m "not slow"
+
+  web:
+    name: 웹 (vitest, tsc, eslint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      # npm workspaces라 루트에서 설치한다
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: vitest
+        run: npm run test
+        working-directory: apps/web
+
+      - name: tsc
+        run: npx tsc --noEmit
+        working-directory: apps/web
+
+      - name: eslint
+        run: npm run lint
+        working-directory: apps/web
+
+  docker:
+    name: Docker 빌드 검증
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      # compose 파일이 유효한지 확인한다 (비밀번호는 CI용 더미 값)
+      - name: compose 설정 검증
+        run: docker compose config --quiet
+        env:
+          POSTGRES_PASSWORD: ci-dummy-password
+
+      - uses: docker/setup-buildx-action@v3
+
+      # push 없이 빌드만 한다. 캐시는 GitHub Actions 캐시를 쓴다
+      - name: api 이미지 빌드
+        uses: docker/build-push-action@v6
+        with:
+          context: apps/api
+          push: false
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,scope=api,mode=max
+
+      - name: web 이미지 빌드
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          push: false
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,scope=web,mode=max
