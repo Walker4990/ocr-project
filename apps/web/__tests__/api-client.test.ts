@@ -65,7 +65,13 @@ describe("apiFetch", () => {
   it("오류 응답은 본문의 requestId를 담은 ApiError를 던진다", async () => {
     mockFetch(
       Response.json(
-        { code: "invalid_file", message: "지원하지 않는 형식", requestId: "srv-1" },
+        {
+          error: {
+            code: "invalid_file",
+            message: "지원하지 않는 형식",
+            requestId: "srv-1",
+          },
+        },
         { status: 422 },
       ),
     );

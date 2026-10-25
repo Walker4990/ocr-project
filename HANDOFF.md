@@ -3,12 +3,13 @@
 `/clear` 후 이어서 작업할 때 가장 먼저 읽는다. 전체 계획은 `ROADMAP.md`, 태스크 상세는 `task-master show <id>`.
 이 파일은 진행 상황이 바뀔 때마다 갱신한다.
 
-## 현재 상태 (태스크 2 완료 직후)
+## 현재 상태 (태스크 3, 4, 10 완료 직후)
 
-- 완료: 태스크 1 (모노레포 및 개발 환경), 2 (Docker Compose), 6 (골든셋 생성기), 8 (OcrEngine Protocol), 9 (PaddleOCR 어댑터)
-- 다음: `task-master next`로 확인한다. 병렬로 3번, 4번, 10번도 가능하다
+- 완료: 태스크 1 (모노레포 및 개발 환경), 2 (Docker Compose), 3 (FastAPI 골격), 4 (Next.js 구조), 6 (골든셋 생성기), 8 (OcrEngine Protocol), 9 (PaddleOCR 어댑터), 10 (전처리)
+- 다음: `task-master next`로 확인한다
 - 저장소는 독립 git이고 원격은 아직 없다
-- 검증 상태: `pytest` 1105건(slow 1건 포함, 2번에서 4건 추가), `ruff`, `pyright`(strict) 통과. 웹 `npm run test` 2건, `tsc`, `lint`도 통과(2번 작업 직후 확인)
+- 검증 상태: `pytest -m "not slow"` 1156건, `ruff`, `pyright`(strict) 통과. 웹 `npm run test` 16건, `tsc`, `lint` 통과(병합 후 확인). 3·4·10번은 서브에이전트 3개가 worktree에서 병렬로 구현해 병합했다
+- 병합 후 docker compose에서 api 헬스체크가 새 `/health`로 통과하는지는 아직 돌려 보지 않았다 (로직상 DB는 psycopg가 없어 skipped, Redis는 ok라 200이어야 한다)
 - 의존성 순서를 먼저 확인한다: 태스크를 고르기 전에 `task-master show <id>`의 Dependencies가 모두 done인지 본다 (이번에 9번이 8번에 의존하는 것을 놓쳐 인계 메모가 틀렸었다)
 
 ## OCR 인터페이스 (태스크 8 산출물)
@@ -48,6 +49,33 @@
   - 따라서 주소는 토큰 위치(bbox)로 줄을 합치는 후처리가 필요할 수 있다. 판단은 추출기 태스크에서 한다
 - **CPU 속도 실험** (oneDNN 끈 상태, invoice_000/040, 초): 기준 20.9/15.0, 스레드 6개 26.5/18.2, 스레드 12개 20.9/16.4, 인식 배치 16 20.5/16.0, 입력 1280 축소 19.2/15.2로 모두 효과 없었다. 원인은 oneDNN을 꺼 둔 것이었고 paddlepaddle 3.2.2로 해결했다(위 함정 2). 위 3장 수치와 50장 측정의 시간(16.5초)은 해결 전 값이다. 정확도 수치는 해결 후에도 같다
 - 모델 로딩은 처음엔 약 17초였고 캐시가 있는 컨테이너에서는 3.4초였다. 그래도 워커 시작 시 한 번만 로드하고 상주시켜야 한다(작업마다 로드하면 안 된다)
+
+## FastAPI 골격 (태스크 3 산출물)
+
+- 오류 응답 형식: `{"error": {"code", "message", "requestId", "details"?}}`. 새 라우트와 서비스는 `app/exceptions.py`의 예외(`ValidationError` 422, `NotFoundError` 404, `ConflictError` 409, `RateLimitedError` 429)를 던진다. 500에는 내부 메시지를 담지 않고, 검증 실패 `details`에는 입력 값을 넣지 않는다
+- `app/main.py`의 `create_app(settings, health_checkers)` 팩토리로 테스트에서 설정과 체커를 주입한다. 컨트롤러는 `app/controllers/`, 서비스는 `app/services/`에 둔다. 설정은 `app/config.py`(`Settings`, pydantic-settings)
+- 미들웨어(바깥부터): CORS → `RequestIdMiddleware`(`X-Request-ID`, 클라이언트가 보낸 값은 UUID 형식일 때만 받음, structlog contextvars 바인딩, 요청당 `request_completed` 로그) → `RateLimitMiddleware`(IP당 60초 고정 윈도우, 프로세스 메모리, `/health` 제외, 한도 0 이하면 꺼짐)
+- `GET /health`: `{"status": "ok"|"degraded", "checks": {"database", "redis"}}`, 값은 `ok`/`down`/`skipped`, 하나라도 `down`이면 503. psycopg가 없으면 DB는 `skipped`(compose가 `DATABASE_URL`을 주입해도 헬스체크가 깨지지 않게). **7번에서 psycopg를 설치하면 실제 `SELECT 1`을 수행**하므로 DB가 안 뜨면 503이 된다. 비동기 엔진을 쓰면 체커를 엔진 재사용 방식으로 바꿀지 검토한다
+- 의존성: `structlog`(런타임) 추가
+- 테스트 함정: `create_app`이 `configure_logging`을 호출하므로 `structlog.testing.capture_logs()` 블록 안에서 앱을 만들면 캡처가 풀린다(앱을 먼저 만든다). 500 경로 테스트는 `TestClient(raise_server_exceptions=False)`
+- 한계: 레이트 리밋은 인스턴스마다 따로 센다. 리버스 프록시 뒤에서는 `X-Forwarded-For` 처리가 필요하다. 업로드 후 잡 enqueue 때 `structlog.contextvars`의 requestId를 잡 인자에 실어 워커에서 다시 bind해야 한다(아직 안 함)
+
+## Next.js 구조 (태스크 4 산출물)
+
+- `apps/web`: `lib/api-client.ts`(`apiFetch`, `ApiError{status, code, message, requestId}`, `createRequestId`, 모든 요청에 `X-Request-ID`, 기준 주소는 `NEXT_PUBLIC_API_URL`이고 없으면 `http://localhost:8000`), `stores/ui-store.ts`(Zustand), `components/error-notice.tsx`, `components/ui/{button,card,badge}.tsx`, `components.json`(shadcn, style radix-nova, Tailwind v4)
+- 오류 파싱은 백엔드 규격 `{"error": {...}}`에 맞춘다(병합 때 에이전트의 가정을 고쳤다). 본문에 requestId가 없으면 `X-Request-ID` 헤더, 그것도 없으면 보낸 값. 네트워크 오류는 status 0, code `network_error`
+- 컴포넌트 테스트는 파일 상단에 `// @vitest-environment jsdom` 주석 + testing-library. Vitest는 `vitest.config.ts`(`@` 별칭)
+- 의존성(모두 무료): zustand, radix-ui, class-variance-authority, clsx, tailwind-merge, lucide-react, tw-animate-css, shadcn(런타임) / testing-library, jsdom, @vitejs/plugin-react(dev)
+- **shadcn 주의**: `npx shadcn add` 후 출처 불분명한 `cn` npm 패키지 import가 생기면 `@/lib/utils`로 고친다. 최신 스타일은 `radix-ui` 통합 패키지를 쓴다(`Slot.Root` 등). 생성된 `globals.css`의 `--font-sans` 순환 참조는 고쳐 두었다
+- 검증 못 한 것: `npm run dev` 화면 확인, web Docker 이미지 재빌드. OpenAPI 타입 생성(openapi-typescript 등)은 미도입(연동 시 제안)
+
+## 전처리 (태스크 10 산출물)
+
+- `apps/api/app/ocr/preprocessing.py`, 테스트 `tests/ocr/test_preprocessing.py`와 slow `test_preprocessing_ocr.py`. 모두 RGB `NDArray[np.uint8]` 입출력이고 입력을 바꾸지 않는다
+- 함수: `decode_image(bytes)`(Pillow, EXIF 회전 반영), `split_pdf(bytes, dpi=200)`(pypdfium2), `estimate_skew_angle`/`deskew`(Hough, 반시계가 양수, 0.3도 미만이면 그대로, 15도 초과 선분 무시, 빈 곳 흰색), `enhance_contrast`(LAB + CLAHE), `adaptive_threshold`(가우시안, 0/255 RGB), `resize_max_side`(줄이기만 함). **기본으로 켤 단계는 모듈이 정하지 않는다**(호출하는 쪽 설정)
+- 의존성: `pypdfium2` 추가(PDF 분리 결정 확정), `pillow`를 dev에서 런타임으로 이동
+- **간이 측정** (7장: clean 000, skewed 005·006, low_res 010·011, photo 015·016 / 필드 149개 / 위 50장 측정과 같은 간이 지표 / 1회 측정이라 시간 오차 큼): 원본 138(92.6%), deskew 137(91.9%), deskew+CLAHE 136(91.3%), +적응형 임계화 122(81.9%), deskew+긴 변 1600 리사이즈 138(92.6%). 임계화만 low_res에서 5~7건 떨어졌다. **전처리의 정확도 이득은 이 샘플에서 확인되지 않았고 임계화는 해로웠다.** 기본 on/off는 벤치마크 태스크에서 CER·필드 정확도로 판단한다. 골든셋 기울기(1.5~4도)는 PaddleOCR가 이미 잘 읽어서 이득이 안 보인다. 5~15도는 합성 회전 테스트(오차 0.7도 이내)로만 확인했다. 손글씨 모사와 실제 촬영본은 측정하지 않았다
+- 한계: 회전만 보정하고 photo의 원근 왜곡은 보정하지 않는다. 글줄이 충분히 길어야 하며 선분을 못 찾으면 0도. `split_pdf`에 페이지 수·크기 상한이 없으니 업로드 API(11번 부근)에서 제한한다. pypdfium2는 타입 스텁이 없어 Protocol 캐스팅과 `# pyright: ignore` 한 줄을 썼다
 
 ## 골든셋 (태스크 6 산출물)
 
@@ -92,6 +120,10 @@
 - **Task Master AI 명령**(`parse-prd`, `analyze-complexity`, `expand`)은 오래 걸린다(수 분~수십 분). `run_in_background`로 실행한다
 - **`.mcp.json`**에는 API 키 자리표시자만 있다. 실제 키를 넣으면 커밋되므로 넣지 않는다 (현재 `claude-code` 공급자라 키가 필요 없다)
 - `git add` 시 CRLF 변환 경고가 많이 나오지만 동작에는 문제 없다
+- **새 worktree에는 `samples/fonts/`(gitignore)가 없어** samples 테스트 약 890건이 FileNotFoundError로 실패한다. 메인 체크아웃의 폴더를 복사하거나 `python samples/fetch_fonts.py`로 받는다
+- **`uv sync`와 opencv**: 로컬 환경에 opencv 3종이 같이 깔려 있으면 `uv sync`가 잠금 파일에 없는 둘을 지우면서 공용 `cv2` 폴더가 망가진다(`module 'cv2' has no attribute 'putText'`). `uv sync --reinstall-package opencv-contrib-python`으로 복구한다. 잠금 파일에는 contrib 하나뿐이라 Docker 이미지는 영향이 없다
+- 새 의존성이 들어온 브랜치를 병합한 뒤에는 루트에서 `npm ci`, `apps/api`에서 `uv sync`를 먼저 한다
+- `task-master show`는 저장소 루트에서 실행한다(`apps/api` 안에서는 Task not found)
 - **bash 도구에는 uv가 PATH에 없다.** uv/pytest/ruff/pyright는 PowerShell에서 실행한다. 작업 디렉터리는 `apps/api`이고, `uv run pytest`가 `samples/tests`까지 함께 돈다 (`pyproject.toml`의 testpaths, pythonpath). `samples/tests`만 경로로 지정하면 rootdir이 달라져 import가 실패하니 `-k`로 거른다
 - 루트에서 `npx tsc --noEmit`을 하면 tsconfig가 없어 도움말만 나온다. `apps/web`에서 실행한다
 - 보호 훅이 `Remove-Item -Recurse -Force`를 막는다. 생성물을 지울 때는 `Remove-Item 경로\*.png`처럼 대상 파일을 지정한다
@@ -103,7 +135,7 @@
 |---|---|---|
 | 9번 이후 | 실제 필기(손글씨) 샘플 확보 여부. 모사 10장은 이미 있음 | 일반 OCR 엔진은 한글 손글씨에 약해 정확도가 낮게 나올 가능성이 높다. 9번 결과를 보고 판단 |
 | 7번 | psycopg 3 추가 (확정됨, 설치만 남음) | - |
-| 10번 | PDF 분리: pypdfium2 vs PyMuPDF | pypdfium2 (PyMuPDF는 AGPL) |
+| 10번 | PDF 분리: pypdfium2 vs PyMuPDF | pypdfium2 확정, 설치 완료 (PyMuPDF는 AGPL) |
 | 14번 이후 | 표 인식이 충분한지, LLM 폴백 비중 | 벤치마크 결과로 판단 |
 | P4 후반 | 데모 배포 대상 | 미정. 30번 착수 전 제안 |
 | 시점 미정 | GitHub 원격 저장소 생성과 공개 범위 | 사용자 확인 필요 |

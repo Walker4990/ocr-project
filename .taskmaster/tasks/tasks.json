@@ -43,11 +43,12 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 6,
         "recommendedSubtasks": 8,
-        "expansionPrompt": "FastAPI 골격을 다음으로 세분화: 1) FastAPI 앱 초기화 및 기본 설정, 2) requestId 미들웨어 구현 및 테스트, 3) 도메인 예외 클래스 정의(exceptions.py), 4) 전역 예외 핸들러 구현 및 테스트, 5) 구조화 로깅 설정(structlog), 6) /health 엔드포인트 구현(DB/Redis 연결 체크), 7) CORS 미들웨어 설정, 8) 레이트 리밋 미들웨어 설정 및 전체 통합 테스트"
+        "expansionPrompt": "FastAPI 골격을 다음으로 세분화: 1) FastAPI 앱 초기화 및 기본 설정, 2) requestId 미들웨어 구현 및 테스트, 3) 도메인 예외 클래스 정의(exceptions.py), 4) 전역 예외 핸들러 구현 및 테스트, 5) 구조화 로깅 설정(structlog), 6) /health 엔드포인트 구현(DB/Redis 연결 체크), 7) CORS 미들웨어 설정, 8) 레이트 리밋 미들웨어 설정 및 전체 통합 테스트",
+        "updatedAt": "2026-10-25T07:14:23.069Z"
       },
       {
         "id": "4",
@@ -59,11 +60,12 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 5,
         "recommendedSubtasks": 7,
-        "expansionPrompt": "Next.js 프론트 설정을 다음으로 세분화: 1) Next.js 15 프로젝트 생성 및 App Router 구조 설정, 2) Tailwind CSS 설치 및 설정, 3) shadcn/ui 설치 및 components.json 구성, 4) 기본 레이아웃 및 홈 페이지 작성, 5) Zustand 스토어 기본 구조 작성, 6) API 클라이언트 유틸리티 작성(requestId 전파), 7) TypeScript strict 모드 설정 및 빌드 검증"
+        "expansionPrompt": "Next.js 프론트 설정을 다음으로 세분화: 1) Next.js 15 프로젝트 생성 및 App Router 구조 설정, 2) Tailwind CSS 설치 및 설정, 3) shadcn/ui 설치 및 components.json 구성, 4) 기본 레이아웃 및 홈 페이지 작성, 5) Zustand 스토어 기본 구조 작성, 6) API 클라이언트 유틸리티 작성(requestId 전파), 7) TypeScript strict 모드 설정 및 빌드 검증",
+        "updatedAt": "2026-10-25T07:14:44.651Z"
       },
       {
         "id": "5",
@@ -231,11 +233,12 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 6,
         "recommendedSubtasks": 8,
-        "expansionPrompt": "전처리 파이프라인을 다음으로 세분화: 1) OpenCV 기반 기울기 보정(Hough 변환), 2) 대비 개선(CLAHE), 3) 적응형 임계화, 4) 리사이즈 로직(긴 변 기준), 5) PDF 페이지 분리(pypdfium2/PyMuPDF 선택 및 구현), 6) 전처리 파이프라인 조합 함수, 7) TDD: 기울어진 이미지 보정 검증, 8) 전처리 전후 이미지 비교 테스트"
+        "expansionPrompt": "전처리 파이프라인을 다음으로 세분화: 1) OpenCV 기반 기울기 보정(Hough 변환), 2) 대비 개선(CLAHE), 3) 적응형 임계화, 4) 리사이즈 로직(긴 변 기준), 5) PDF 페이지 분리(pypdfium2/PyMuPDF 선택 및 구현), 6) 전처리 파이프라인 조합 함수, 7) TDD: 기울어진 이미지 보정 검증, 8) 전처리 전후 이미지 비교 테스트",
+        "updatedAt": "2026-10-25T07:15:20.313Z"
       },
       {
         "id": "11",
@@ -619,9 +622,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-24T07:47:51.599Z",
+      "lastModified": "2026-10-25T07:15:20.313Z",
       "taskCount": 32,
-      "completedCount": 5,
+      "completedCount": 8,
       "tags": [
         "master"
       ]

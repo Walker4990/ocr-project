@@ -64,17 +64,19 @@ async function toApiError(
   } catch {
     body = undefined;
   }
-  const fields = isRecord(body) ? body : {};
+  // 백엔드 오류 규격: {"error": {"code", "message", "requestId", "details"?}}
+  const envelope = isRecord(body) ? body.error : undefined;
+  const fields = isRecord(envelope) ? envelope : {};
 
   return new ApiError({
     status: response.status,
     code: pickString(fields, "code"),
     message:
-      pickString(fields, "message", "detail") ??
+      pickString(fields, "message") ??
       (text || `요청 실패 (HTTP ${response.status})`),
     // 우선순위: 응답 본문 > 응답 헤더 > 우리가 보낸 값
     requestId:
-      pickString(fields, "requestId", "request_id") ??
+      pickString(fields, "requestId") ??
       response.headers.get(REQUEST_ID_HEADER) ??
       sentRequestId,
   });
