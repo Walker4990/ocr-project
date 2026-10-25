@@ -182,11 +182,12 @@
           "2",
           "3"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 5,
         "recommendedSubtasks": 7,
-        "expansionPrompt": "DB 스키마를 다음으로 세분화: 1) SQLAlchemy 기본 설정 및 Base 클래스 정의, 2) Document 모델 정의 및 인덱스 설정, 3) OcrResult 모델 정의, 4) Extraction 및 LineItem 모델 정의(관계 설정), 5) ReviewEdit 모델 정의, 6) Alembic 초기화 및 첫 마이그레이션 생성, 7) 마이그레이션 적용 및 모델 CRUD 테스트"
+        "expansionPrompt": "DB 스키마를 다음으로 세분화: 1) SQLAlchemy 기본 설정 및 Base 클래스 정의, 2) Document 모델 정의 및 인덱스 설정, 3) OcrResult 모델 정의, 4) Extraction 및 LineItem 모델 정의(관계 설정), 5) ReviewEdit 모델 정의, 6) Alembic 초기화 및 첫 마이그레이션 생성, 7) 마이그레이션 적용 및 모델 CRUD 테스트",
+        "updatedAt": "2026-10-25T07:59:11.322Z"
       },
       {
         "id": "8",
@@ -623,9 +624,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-25T07:45:54.779Z",
+      "lastModified": "2026-10-25T07:59:11.323Z",
       "taskCount": 32,
-      "completedCount": 9,
+      "completedCount": 10,
       "tags": [
         "master"
       ]

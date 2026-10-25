@@ -12,6 +12,7 @@ dependencies = [
     "paddlepaddle==3.2.2",
     "paddlex[ocr]==3.4.3",
     "pillow>=13.0.0",
+    "psycopg[binary]>=3.3.6",
     "pydantic>=2",
     "pydantic-settings>=2.16.1",
     "pypdfium2>=5.14.0",
@@ -34,6 +35,8 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+# 자동 생성 파일
+extend-exclude = ["alembic/versions"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "ASYNC"]

@@ -3,14 +3,29 @@
 `/clear` 후 이어서 작업할 때 가장 먼저 읽는다. 전체 계획은 `ROADMAP.md`, 태스크 상세는 `task-master show <id>`.
 이 파일은 진행 상황이 바뀔 때마다 갱신한다.
 
-## 현재 상태 (태스크 11 완료 직후)
+## 현재 상태 (태스크 7 완료 직후)
 
-- 완료: 태스크 1 (모노레포 및 개발 환경), 2 (Docker Compose), 3 (FastAPI 골격), 4 (Next.js 구조), 6 (골든셋 생성기), 8 (OcrEngine Protocol), 9 (PaddleOCR 어댑터), 10 (전처리), 11 (표 구조 인식)
+- 완료: 태스크 1 (모노레포 및 개발 환경), 2 (Docker Compose), 3 (FastAPI 골격), 4 (Next.js 구조), 6 (골든셋 생성기), 8 (OcrEngine Protocol), 9 (PaddleOCR 어댑터), 10 (전처리), 7 (DB 스키마), 11 (표 구조 인식)
 - 다음: `task-master next`로 확인한다. 의존성은 `task-master show <id>`로 먼저 본다
 - 원격: `origin` = https://github.com/Walker4990/ocr-project (**public**, 사용자 결정). `main`을 push했고 추적 설정됨. 공개 저장소이니 `.mcp.json`에 실제 키를 넣지 않고, 커밋에 개인정보가 들어가지 않게 한다
-- 검증 상태: `pytest -m "not slow"` 1175건, `ruff`, `pyright`(strict) 통과. 웹 `npm run test` 16건, `tsc`, `lint` 통과(3·4·10번 병합 후 확인). 3·4·10번은 서브에이전트 3개가 worktree에서 병렬로 구현해 병합했고 worktree는 정리했다
+- 검증 상태: `pytest -m "not slow"` 1189건, `ruff`, `pyright`(strict) 통과. 웹 `npm run test` 16건, `tsc`, `lint` 통과(3·4·10번 병합 후 확인). 3·4·10번은 서브에이전트 3개가 worktree에서 병렬로 구현해 병합했고 worktree는 정리했다
 - 병합 후 docker compose에서 api 헬스체크가 새 `/health`로 통과하는지는 아직 돌려 보지 않았다 (로직상 DB는 psycopg가 없어 skipped, Redis는 ok라 200이어야 한다)
 - 의존성 순서를 먼저 확인한다: 태스크를 고르기 전에 `task-master show <id>`의 Dependencies가 모두 done인지 본다 (이번에 9번이 8번에 의존하는 것을 놓쳐 인계 메모가 틀렸었다)
+
+## DB 스키마 (태스크 7 산출물)
+
+- 모델 `apps/api/app/models/`(`base.py`, `document.py`, `extraction.py`), 테스트 `tests/test_models.py`(14건). 테이블: `documents`, `ocr_results`, `extractions`, `line_items`, `review_edits`. PK는 모두 UUID(`uuid4`), 시각은 `timestamptz` + 서버 `now()`
+- 상태값은 `StrEnum`을 VARCHAR(20)으로 저장한다(네이티브 enum 아님): `DocumentStatus`(uploaded/processing/extracted/reviewed/failed), `ExtractionMethod`(rule/llm), `ReviewStatus`(pending/approved/rejected). 새 상태를 추가해도 마이그레이션에서 타입을 바꿀 필요가 없다
+- JSON 컬럼(`ocr_results.tokens`, `extractions.header/validation`, `line_items.bbox`)은 Postgres에서 JSONB, SQLite에서 JSON이다. 타입은 `JsonObject = dict[str, object]`
+- 금액은 원 단위 `BigInteger`, 수량은 `Numeric(18,3)`(소수 수량 대비)다. 품목의 수량·금액은 OCR이 못 읽을 수 있어 nullable이다
+- 삭제: 문서 → 하위 전부 `ON DELETE CASCADE`, 품목 삭제 시 `review_edits.line_item_id`는 `SET NULL`(이력은 남김). 관계에 `passive_deletes=True`라 DB의 CASCADE에 의존한다
+- `content_hash`는 유일 제약이 없다(같은 파일 재업로드 허용). 중복 처리 정책은 18번(Service)에서 정한다
+- 인증이 없어 `review_edits.editor`는 자유 문자열(기본 `reviewer`)이다
+- Alembic: `apps/api/alembic.ini`, `alembic/env.py`(주소는 `sqlalchemy.url` 옵션이 없으면 `DATABASE_URL`), 첫 리비전 `20261025_ba55441cdf6b_initial_schema.py`. 적용은 `apps/api`에서 `uv run alembic upgrade head`. **자동 마이그레이션은 걸지 않았다.** compose에서는 `docker compose run --rm api alembic upgrade head`(Dockerfile이 `alembic*`를 복사하게 고쳤고 이미지 재빌드는 안 해 봤다)
+- 의존성: `psycopg[binary]` 3.3.6 추가(sqlalchemy, alembic은 이미 있었다). 이제 `/health`의 DB 체크가 실제 `SELECT 1`을 수행한다
+- 검증: 테스트는 SQLite 메모리 DB(FK 켬)로 돌고, 마이그레이션 적용·롤백·모델과 스키마 차이 없음도 SQLite에서 테스트한다. **실제 Postgres 16**(임시 컨테이너)에서도 upgrade → downgrade → upgrade, 차이 없음, ORM CRUD, 자식을 로드하지 않은 문서 삭제 시 CASCADE, `DatabaseChecker` ok를 확인했다. compose 전체 기동과 api 헬스체크는 아직 안 돌렸다
+- **함정**: `alembic.ini`에 한글 주석을 쓰면 Windows(cp949)에서 읽다 죽는다. ASCII만 쓴다. 자동 생성 마이그레이션은 SQLite로 만들면 기본값이 `CURRENT_TIMESTAMP`로, JSONB의 `Text()`가 이름 오류로 나오니 Postgres용으로 고친 뒤 커밋한다(`alembic/versions`는 ruff 제외)
+- 이 구조로 만들 때 18번이 정할 것: 세션 팩토리/의존성 주입(아직 엔진·세션 코드 없음), 비동기 엔진 여부
 
 ## OCR 인터페이스 (태스크 8 산출물)
 
@@ -113,7 +128,7 @@
 | 기본 실행 환경 | CPU. GPU(PaddleOCR-VL)는 선택 옵션 |
 | LLM | 옵트인 하이브리드. OCR 텍스트만 전송, 키가 없으면 자동 비활성화 |
 | Python 타입 체커 | pyright (strict) |
-| Postgres 드라이버 | psycopg 3. 아직 설치 안 함, 7번(DB 스키마)에서 추가 |
+| Postgres 드라이버 | psycopg 3 (`psycopg[binary]`, 7번에서 설치) |
 | Next.js | 15 유지. `npm audit` 7건은 알려진 이슈로 두고 4번 시점에 16 업그레이드 재검토 |
 | PaddleOCR | 태스크 1에서 제외. 9번에서 설치와 호환성 검증 |
 | 서브태스크 분해 | `expand --all` 금지. 해당 페이즈 진입 시 점수 7 이상만 `--num=5`로 분해 |
@@ -149,7 +164,6 @@
 | 시점 | 내용 | 현재 의견 |
 |---|---|---|
 | 9번 이후 | 실제 필기(손글씨) 샘플 확보 여부. 모사 10장은 이미 있음 | 일반 OCR 엔진은 한글 손글씨에 약해 정확도가 낮게 나올 가능성이 높다. 9번 결과를 보고 판단 |
-| 7번 | psycopg 3 추가 (확정됨, 설치만 남음) | - |
 | 10번 | PDF 분리: pypdfium2 vs PyMuPDF | pypdfium2 확정, 설치 완료 (PyMuPDF는 AGPL) |
 | 14번 이후 | 표 인식이 충분한지, LLM 폴백 비중 | 벤치마크 결과로 판단 |
 | 11번 이후 | 선 없는 표(mono_receipt)·페이지 전체 표(red_totals_top) 대응으로 토큰 bbox 군집화를 병행할지, 기본 `max_tables`를 1로 둘지 | 11번 간이 측정상 표 모델 단독은 2개 양식에서 쓸 수 없고 나머지도 일부 어긋나며(표본 적음) 느리다. 군집화 병행을 권한다. 벤치마크 태스크에서 판단 |

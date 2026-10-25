@@ -43,7 +43,7 @@ class RedisChecker:
 
 
 class DatabaseChecker:
-    """`SELECT 1`로 확인한다. psycopg는 7번에서 추가하므로 그전엔 드라이버 부재를 skipped로 본다."""
+    """`SELECT 1`로 확인한다. 드라이버가 없는 환경이면 skipped로 본다."""
 
     name = "database"
 

@@ -22,6 +22,8 @@ COPY pyproject.toml uv.lock .python-version ./
 RUN uv sync --frozen --no-dev
 
 COPY app ./app
+COPY alembic.ini ./
+COPY alembic ./alembic
 RUN mkdir -p /app/data/uploads /app/logs /home/app/.paddlex \
     && chown -R app:app /app/data /app/logs /home/app
 
