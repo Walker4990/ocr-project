@@ -6,10 +6,10 @@
 ## 현재 상태 (태스크 15 완료 직후)
 
 - 완료: 태스크 1 (모노레포 및 개발 환경), 2 (Docker Compose), 3 (FastAPI 골격), 4 (Next.js 구조), 6 (골든셋 생성기), 8 (OcrEngine Protocol), 9 (PaddleOCR 어댑터), 10 (전처리), 7 (DB 스키마), 11 (표 구조 인식), 15 (헤더 추출기)
-- 병렬 세션 진행 중(worktree): 태스크 5 (CI), 태스크 12 (Tesseract 어댑터). 끝나면 브랜치를 병합하고 이 메모를 갱신한다
+- 태스크 5 (CI 워크플로, 첫 GitHub Actions 실행 success 5분 22초)와 12 (Tesseract 어댑터)도 완료했다. 두 병렬 세션의 worktree 브랜치는 병합했다
 - 다음: `task-master next`로 확인한다. 의존성은 `task-master show <id>`로 먼저 본다
 - 원격: `origin` = https://github.com/Walker4990/ocr-project (**public**, 사용자 결정). `main`을 push했고 추적 설정됨. 공개 저장소이니 `.mcp.json`에 실제 키를 넣지 않고, 커밋에 개인정보가 들어가지 않게 한다
-- 검증 상태: `pytest -m "not slow"` 1296건, `ruff`, `pyright`(strict) 통과. 웹 `npm run test` 16건, `tsc`, `lint` 통과(3·4·10번 병합 후 확인). 3·4·10번은 서브에이전트 3개가 worktree에서 병렬로 구현해 병합했고 worktree는 정리했다
+- 검증 상태: `pytest -m "not slow"` 1306건, `ruff`, `pyright`(strict) 통과. 웹 `npm run test` 16건, `tsc`, `lint` 통과(3·4·10번 병합 후 확인). 3·4·10번은 서브에이전트 3개가 worktree에서 병렬로 구현해 병합했고 worktree는 정리했다
 - 병합 후 docker compose에서 api 헬스체크가 새 `/health`로 통과하는지는 아직 돌려 보지 않았다 (로직상 DB는 psycopg가 없어 skipped, Redis는 ok라 200이어야 한다)
 - 의존성 순서를 먼저 확인한다: 태스크를 고르기 전에 `task-master show <id>`의 Dependencies가 모두 done인지 본다 (이번에 9번이 8번에 의존하는 것을 놓쳐 인계 메모가 틀렸었다)
 
@@ -118,6 +118,14 @@
 - 테스트 픽스처: `tests/extraction/fixtures/ocr_tokens/`에 골든셋 50장의 PaddleOCR 토큰(JSON). OCR 모델을 바꾸면 `uv run python tests/extraction/dump_ocr_tokens.py`로 다시 만든다(약 4분). 정확도 하한은 `test_rule_extractor_golden.py`의 `MIN_ACCURACY`
 - 고친 버그: 저해상도에서 줄 간격이 라벨 높이보다 좁으면 둘째 줄이 같은 줄로 잡혀 주소가 두 번 붙었다(라벨 줄에 가장 가까운 토큰 기준으로 재필터). 날짜는 일 뒤에 숫자/다른 한글이 붙으면 거부한다
 - 한계: 역할 라벨(공급자/공급받는자)을 못 읽으면 그 당사자 필드가 전부 None이다(폴백 없음, 필요하면 읽는 순서로 추정하는 폴백을 추가). 선 없는 영수증 양식도 라벨은 읽으므로 동작하지만 표본이 적다. 실제 촬영본·실제 필기는 측정하지 않았다. 사업자번호 체크섬과 금액 합계 검증은 17번 몫이다(여기서는 형식만 본다)
+
+## Tesseract 어댑터 (태스크 12 산출물)
+
+- `apps/api/app/ocr/engines/tesseract_adapter.py`(레지스트리 이름 `tesseract`, 언어 `kor+eng`), 테스트 `tests/ocr/test_tesseract_adapter.py`(가짜 러너 10건 + 실제 엔진 slow 1건). 의존성 `pytesseract` 추가. 바이너리 탐색: 환경변수 `TESSERACT_CMD` > PATH > `C:\Program Files\Tesseract-OCR\tesseract.exe`
+- **설치 함정(Windows)**: winget(`UB-Mannheim.TesseractOCR` 5.4.0)은 `eng`, `osd`만 깔고 `kor`가 없다. Program Files에는 관리자 권한 없이 못 쓰므로 `tessdata_fast`의 `kor.traineddata`를 `~/tessdata`에 두고 `eng`·`osd`도 복사한 뒤 사용자 환경변수 `TESSDATA_PREFIX`를 그 폴더로 지정했다. 새 터미널에서 적용된다
+- 실제 엔진 검증함: 골든셋 `invoice_000`에서 문서번호·날짜는 읽는다. **베이스라인은 약하다**: 큰 제목 `거래명세서`가 `거래`로, 품목명·수량 열 대부분이 빠진다(기본 `--psm 3`)
+- **간이 비교 (3장, 라벨 값이 텍스트에 포함되는지, 1회)**: `invoice_000` psm 3 11/20, psm 6 2/20, psm 11 13/20 / `invoice_002` 12/16, 12/16, 14/16 / `invoice_005` 3/8, 2/8, 5/8. psm 11(희소 텍스트)이 조금 낫지만 표본이 적어 결론은 못 낸다. 어댑터는 기본 psm을 바꾸지 않았다. **벤치마크(14번)에서 psm 3 vs 11을 비교하고, 베이스라인이 불리하게 설정되지 않았는지 확인한다**
+- 테스트 함정: slow 테스트의 준비 여부는 `build_tesseract()`로 판단한다(어댑터와 같은 탐색 경로). PATH만 보면 설치돼 있어도 skip된다
 
 ## 골든셋 (태스크 6 산출물)
 
