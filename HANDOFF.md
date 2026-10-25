@@ -3,12 +3,12 @@
 `/clear` 후 이어서 작업할 때 가장 먼저 읽는다. 전체 계획은 `ROADMAP.md`, 태스크 상세는 `task-master show <id>`.
 이 파일은 진행 상황이 바뀔 때마다 갱신한다.
 
-## 현재 상태 (태스크 3, 4, 10 완료 직후)
+## 현재 상태 (태스크 11 완료 직후)
 
-- 완료: 태스크 1 (모노레포 및 개발 환경), 2 (Docker Compose), 3 (FastAPI 골격), 4 (Next.js 구조), 6 (골든셋 생성기), 8 (OcrEngine Protocol), 9 (PaddleOCR 어댑터), 10 (전처리)
-- 다음: `task-master next`로 확인한다
+- 완료: 태스크 1 (모노레포 및 개발 환경), 2 (Docker Compose), 3 (FastAPI 골격), 4 (Next.js 구조), 6 (골든셋 생성기), 8 (OcrEngine Protocol), 9 (PaddleOCR 어댑터), 10 (전처리), 11 (표 구조 인식)
+- 다음: `task-master next`로 확인한다. 의존성은 `task-master show <id>`로 먼저 본다
 - 저장소는 독립 git이고 원격은 아직 없다
-- 검증 상태: `pytest -m "not slow"` 1156건, `ruff`, `pyright`(strict) 통과. 웹 `npm run test` 16건, `tsc`, `lint` 통과(병합 후 확인). 3·4·10번은 서브에이전트 3개가 worktree에서 병렬로 구현해 병합했다
+- 검증 상태: `pytest -m "not slow"` 1175건, `ruff`, `pyright`(strict) 통과. 웹 `npm run test` 16건, `tsc`, `lint` 통과(3·4·10번 병합 후 확인). 3·4·10번은 서브에이전트 3개가 worktree에서 병렬로 구현해 병합했고 worktree는 정리했다
 - 병합 후 docker compose에서 api 헬스체크가 새 `/health`로 통과하는지는 아직 돌려 보지 않았다 (로직상 DB는 psycopg가 없어 skipped, Redis는 ok라 200이어야 한다)
 - 의존성 순서를 먼저 확인한다: 태스크를 고르기 전에 `task-master show <id>`의 Dependencies가 모두 done인지 본다 (이번에 9번이 8번에 의존하는 것을 놓쳐 인계 메모가 틀렸었다)
 
@@ -77,6 +77,21 @@
 - **간이 측정** (7장: clean 000, skewed 005·006, low_res 010·011, photo 015·016 / 필드 149개 / 위 50장 측정과 같은 간이 지표 / 1회 측정이라 시간 오차 큼): 원본 138(92.6%), deskew 137(91.9%), deskew+CLAHE 136(91.3%), +적응형 임계화 122(81.9%), deskew+긴 변 1600 리사이즈 138(92.6%). 임계화만 low_res에서 5~7건 떨어졌다. **전처리의 정확도 이득은 이 샘플에서 확인되지 않았고 임계화는 해로웠다.** 기본 on/off는 벤치마크 태스크에서 CER·필드 정확도로 판단한다. 골든셋 기울기(1.5~4도)는 PaddleOCR가 이미 잘 읽어서 이득이 안 보인다. 5~15도는 합성 회전 테스트(오차 0.7도 이내)로만 확인했다. 손글씨 모사와 실제 촬영본은 측정하지 않았다
 - 한계: 회전만 보정하고 photo의 원근 왜곡은 보정하지 않는다. 글줄이 충분히 길어야 하며 선분을 못 찾으면 0도. `split_pdf`에 페이지 수·크기 상한이 없으니 업로드 API(11번 부근)에서 제한한다. pypdfium2는 타입 스텁이 없어 Protocol 캐스팅과 `# pyright: ignore` 한 줄을 썼다
 
+## 표 구조 인식 (태스크 11 산출물)
+
+- `apps/api/app/ocr/table_recognizer.py`, 테스트 `tests/ocr/test_table_recognizer.py`(일반 19건 + slow 1건). `OcrEngine`/`OcrPage`는 그대로 두고 **별도 호출**이다: `build_table_recognizer(use_gpu=None, max_tables=None)`로 만들고 `TableRecognizer.recognize(rgb) -> tuple[OcrTable, ...]`. 모델이 추가로 8~30초 걸리고 Protocol을 건드리면 모든 엔진이 영향을 받아 `OcrPage`에 넣지 않았다. 호출자가 `OcrPage`(약 5초)와 조합한다. 레지스트리에는 등록하지 않았다. import만으로는 paddle을 로드하지 않으며, 워커에 한 번 만들어 상주시킨다
+- 타입: `OcrTable`(bbox, n_rows, n_cols, `cells`, `grid()`, `rows()`), `TableCell`(row, col, row_span, col_span, text, bbox). 좌표 규약은 기존과 같다. HTML 셀 수와 상자 수가 다르면 `TableStructureError`를 내고 인식기는 그 표만 건너뛴다(WARNING 로그)
+- 흐름: `PP-DocLayout-L`로 표 영역 검출 → `select_table_boxes`로 중복(IoU 0.7 초과)과 다른 표를 둘 이상 품은 상자를 걸러냄 → 영역별로 잘라 `TableRecognitionPipelineV2`(`use_layout_detection=False`)에 입력 → `pred_html`의 `<td>` 순서와 `cell_box_list`를 짝지어 셀 구성. 한국어 인식 모델과 모바일 검출 모델을 명시한다(GPU면 서버 검출)
+- 의존성: `paddlex[ocr]==3.4.3` 추가(표 파이프라인이 요구, 24개 패키지, `.venv` 약 +158MB, AGPL 없음). paddlepaddle 3.2.2 고정은 유지, 표 모델도 이 버전의 CPU oneDNN에서 돈다. 모델은 첫 실행에 PP-DocLayout-L, 표 분류, 유선·무선 셀 검출(RT-DETR-L), SLANeXt를 `~/.paddlex`로 받는다(첫 로딩 약 2분, 이후 약 15초)
+- **함정 3**: 레이아웃을 켠 채 이미지 전체를 파이프라인에 맡기면 중복 검출과 페이지 전체 표 때문에 장당 약 40초가 들고, 페이지 전체를 한 표로 넣으면 HTML과 셀 상자의 짝이 어긋난다. 레이아웃을 끄고 이미지 전체를 한 표로 넣으면 약 10초지만 구조가 틀리고 금액 열을 잃는다
+- **속도** (CPU, oneDNN, 1회 측정): 기본 8~31초/장(표 1개당 6.5~8.3초, 병목은 SLANeXt_wired), `max_tables=1`이면 7.5~12초. 기본 CPU에서 실용적이라고 하기 어렵다
+- **간이 측정** (골든셋 8장 시도, 6장 평가 / 1회 / 정확 일치 / 에이전트 측정): "행 수 일치"는 헤더 이후 합계류 제외 데이터 행 수가 라벨 items 수와 같은지, "셀 일치"는 라벨 k번째 품목이 인식 표 k번째 데이터 행의 셀(공백·쉼표 제외)과 같은지. 표가 검출된 6장 중 행 수 일치 3장(000, 002, 040). 6장 40개 품목 기준 품목명 21, 수량 24, 단가 24, 금액 23개 일치
+  - classic(000, 040 손글씨 모사)·serif_simple(002)은 거의 맞는다. blue_stacked 001은 두 행이 한 셀로 합쳐져 행이 어긋났고(값은 맞음), 촬영본 016은 구조가 붕괴했다
+  - red_totals_top 003은 레이아웃이 페이지 전체를 감싼 표 하나만 내서 첫 품목 행이 사라지고 전부 밀렸다(위치 기반 지표라 0점)
+  - **mono_receipt(004, 044)는 선 없는 영수증 스타일이라 표 미검출**. 5개 양식 중 2개는 현재 쓸 수 없다
+  - 표본이 양식당 1~2장이라 통계적 의미가 없다. 손글씨 모사 결과를 실제 필기 성능으로 말하지 않는다. 측정 스크립트는 저장소에 없다(벤치마크 태스크에서 만든다)
+- 구현하지 않은 대안: 기존 OcrPage 토큰 bbox를 행/열로 군집화하는 방식. 선 없는 표와 페이지 전체 표에 필요할 가능성이 크고 추가 비용이 거의 없다. 벤치마크에서 "표 모델 vs 토큰 군집화 vs 폴백"을 비교한다
+
 ## 골든셋 (태스크 6 산출물)
 
 - 생성기: `samples/doculens_samples/`, 테스트: `samples/tests/`, 설명: `samples/README.md`
@@ -137,5 +152,6 @@
 | 7번 | psycopg 3 추가 (확정됨, 설치만 남음) | - |
 | 10번 | PDF 분리: pypdfium2 vs PyMuPDF | pypdfium2 확정, 설치 완료 (PyMuPDF는 AGPL) |
 | 14번 이후 | 표 인식이 충분한지, LLM 폴백 비중 | 벤치마크 결과로 판단 |
+| 11번 이후 | 선 없는 표(mono_receipt)·페이지 전체 표(red_totals_top) 대응으로 토큰 bbox 군집화를 병행할지, 기본 `max_tables`를 1로 둘지 | 11번 간이 측정상 표 모델 단독은 2개 양식에서 쓸 수 없고 나머지도 일부 어긋나며(표본 적음) 느리다. 군집화 병행을 권한다. 벤치마크 태스크에서 판단 |
 | P4 후반 | 데모 배포 대상 | 미정. 30번 착수 전 제안 |
 | 시점 미정 | GitHub 원격 저장소 생성과 공개 범위 | 사용자 확인 필요 |

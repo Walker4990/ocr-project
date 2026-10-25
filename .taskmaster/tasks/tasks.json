@@ -250,11 +250,12 @@
         "dependencies": [
           "9"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 7,
         "recommendedSubtasks": 8,
-        "expansionPrompt": "표 구조 인식을 다음으로 세분화: 1) PP-Structure 초기화 및 환경 설정, 2) 표 영역 감지 로직 구현, 3) 셀 단위 bbox 추출, 4) 셀 내 텍스트 추출 및 OCR 연동, 5) OcrPage에 표 구조 정보 추가(행/열 그리드), 6) TDD: 표 포함 샘플 문서로 테스트 작성, 7) 테스트 통과를 위한 구현, 8) 정답 라벨 대비 셀 개수/위치 정확도 검증"
+        "expansionPrompt": "표 구조 인식을 다음으로 세분화: 1) PP-Structure 초기화 및 환경 설정, 2) 표 영역 감지 로직 구현, 3) 셀 단위 bbox 추출, 4) 셀 내 텍스트 추출 및 OCR 연동, 5) OcrPage에 표 구조 정보 추가(행/열 그리드), 6) TDD: 표 포함 샘플 문서로 테스트 작성, 7) 테스트 통과를 위한 구현, 8) 정답 라벨 대비 셀 개수/위치 정확도 검증",
+        "updatedAt": "2026-10-25T07:45:54.778Z"
       },
       {
         "id": "12",
@@ -622,9 +623,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-25T07:15:20.313Z",
+      "lastModified": "2026-10-25T07:45:54.779Z",
       "taskCount": 32,
-      "completedCount": 8,
+      "completedCount": 9,
       "tags": [
         "master"
       ]
